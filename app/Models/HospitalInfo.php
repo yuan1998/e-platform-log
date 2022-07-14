@@ -48,10 +48,10 @@ class HospitalInfo extends Model
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getProducts($logSell = true)
+    public function getProducts($date = null, $logSell = true)
     {
         $rows = $this->client()->search();
-        $yesterday = Carbon::yesterday()->toDateTime();
+        $yesterday = $date ?: Carbon::yesterday()->toDateTime();
 
         $ids = [];
         foreach ($rows as $row) {
