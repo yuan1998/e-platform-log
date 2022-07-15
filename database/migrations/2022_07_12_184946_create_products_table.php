@@ -19,8 +19,8 @@ class CreateProductsTable extends Migration
             $table->string("name");
             $table->unsignedBigInteger("hospital_id")->index();
             $table->unsignedInteger("platform_type");
-            $table->string("price");
-            $table->string("online_price");
+            $table->integer("price");
+            $table->integer("online_price");
             $table->timestamps();
         });
     }

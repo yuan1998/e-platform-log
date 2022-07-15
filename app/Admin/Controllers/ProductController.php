@@ -25,12 +25,8 @@ class ProductController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(Product::with(['hospital'])->orderBy('updated_at', 'desc'), function (Grid $grid) {
+        return Grid::make(Product::with(['hospital']), function (Grid $grid) {
             $grid->scrollbarX();
-
-//            $grid->batchActions([
-//                new MultipleProductLineChart()
-//            ]);
 
             $grid->column('id')->display(function ($val) {
 
@@ -44,9 +40,9 @@ class ProductController extends AdminController
             });
 //            $grid->column('origin_id');
             $grid->column('name');
-            $grid->column('price');
-            $grid->column('online_price');
-            $grid->column('sell');
+            $grid->column('price')->sortable();
+            $grid->column('online_price')->sortable();
+            $grid->column('sell')->sortable();
             $grid->column('status')->using(Product::STATUS);
             $grid->column('hospital.name', '医院名称');
             $grid->column('platform_type')->using(HospitalInfo::PLATFORM_LIST);
@@ -54,7 +50,13 @@ class ProductController extends AdminController
             $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
+                $filter->like('name');
+                $hospitals = HospitalInfo::query()
+                    ->select(['name', 'id'])
+                    ->where('enable', 1)
+                    ->get()->pluck('name', 'id');
+                $filter->equal('hospital_id')->select($hospitals);
+                $filter->equal('platform_type')->select(HospitalInfo::PLATFORM_LIST);
 
             });
         });

@@ -14,7 +14,7 @@ class ChangeProductsTableAddSellField extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('sell');
+            $table->integer('sell');
             $table->integer('status')->default(0);
         });
     }

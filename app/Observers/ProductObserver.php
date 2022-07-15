@@ -20,6 +20,13 @@ class ProductObserver
             $date = Carbon::now()->toDateTimeString();
             foreach ($fields as $key => $dirty) {
                 $originValue = data_get($origin, $key);
+
+
+                if ($key == "status") {
+                    $originValue = data_get(Product::STATUS, $originValue);
+                    $dirty = data_get(Product::STATUS, $dirty);
+                }
+
                 ProductLog::create([
                     "product_id" => $product->id,
                     "date" => $date,

@@ -17,7 +17,7 @@ class CreateProductSellsTable extends Migration
             $table->id();
             $table->unsignedBigInteger("product_id");
             $table->dateTime("date");
-            $table->string("sell");
+            $table->integer("sell");
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
