@@ -50,7 +50,11 @@ class XinYanClient extends BaseClient
 
 
         if (!$total = data_get($result, 'data.total', 0)) {
-            Log::info('Debug 新氧 Api Result', [$body]);
+            Log::info('Debug 新氧 Api Result', [
+                'result'=> $body ,
+                'hospital' => $this->hospital,
+                'data' => $data,
+            ]);
             throw new Exception("Oops! Request Api is Error ,pls concat admin.");
         }
 
