@@ -49,15 +49,15 @@ class XinYanClient extends BaseClient
         $result = json_decode($body, true);
 
 
-        if (!$total = data_get($result, 'data.total', 0)) {
+        if (!data_get($result, 'status') === 200) {
             Log::info('Debug 新氧 Api Result', [
-                'result'=> $body ,
+                'result' => $body,
                 'hospital' => $this->hospital,
                 'data' => $data,
             ]);
             throw new Exception("Oops! Request Api is Error ,pls concat admin.");
         }
-
+        $total = data_get($result, 'data.total', 0);
         $rows = data_get($result, 'data.list');
 
         $result = collect($rows)->map(function ($row) {
