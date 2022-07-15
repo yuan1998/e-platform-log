@@ -49,7 +49,7 @@ class XinYanClient extends BaseClient
         $result = json_decode($body, true);
 
 
-        if (!data_get($result, 'status') === 200) {
+        if (data_get($result, 'status') !== 200) {
             Log::info('Debug 新氧 Api Result', [
                 'result' => $body,
                 'hospital' => $this->hospital,
