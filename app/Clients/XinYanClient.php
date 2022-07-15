@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class XinYanClient extends BaseClient
 {
@@ -48,8 +49,10 @@ class XinYanClient extends BaseClient
         $result = json_decode($body, true);
 
 
-        if (!$total = data_get($result, 'data.total', 0))
+        if (!$total = data_get($result, 'data.total', 0)) {
+            Log::info('Debug 新氧 Api Result', [$body]);
             throw new Exception("Oops! Request Api is Error ,pls concat admin.");
+        }
 
         $rows = data_get($result, 'data.list');
 
