@@ -76,4 +76,14 @@ class HospitalInfo extends Model
     }
 
 
+    public static function pullAll()
+    {
+        $hospital = HospitalInfo::query()->where('enable', 1)->get();
+        $date = Carbon::today()->toDateString();
+        foreach ($hospital as $item) {
+            $item->getProducts($date);
+        }
+
+    }
+
 }

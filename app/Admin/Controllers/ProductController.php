@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Tools\MultipleProductLineChart;
+use App\Admin\Grid\Tools\PullHospitalTool;
 use App\Admin\Renderable\LineChart;
 use App\Admin\Widgets\Charts\MyAjaxLine;
 use App\Admin\Widgets\Charts\MyLine;
@@ -27,6 +28,7 @@ class ProductController extends AdminController
     {
         return Grid::make(Product::with(['hospital']), function (Grid $grid) {
             $grid->scrollbarX();
+            $grid->tools(new PullHospitalTool());
 
             $grid->column('id')->display(function ($val) {
 

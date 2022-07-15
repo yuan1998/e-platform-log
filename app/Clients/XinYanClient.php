@@ -5,6 +5,7 @@ namespace App\Clients;
 
 use App\Models\HospitalInfo;
 use App\Models\Product;
+use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
@@ -91,16 +92,13 @@ class XinYanClient extends BaseClient
             $page++;
             sleep(1);
         } while ($page <= $last_page);
-        
+
         return $rows->unique('origin_id');
     }
 
     public static function test()
     {
-        $model = HospitalInfo::find(1);
-        $model->getProducts();
-
-
+        HospitalInfo::pullAll();
     }
 
 
