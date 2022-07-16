@@ -24,6 +24,7 @@ class Product extends Model
         "online_price",
         "status",
         "sell",
+        "star",
         "created_at",
     ];
 
@@ -51,5 +52,11 @@ class Product extends Model
     {
         return $this->hasMany(ProductSell::class, 'product_id', 'id');
     }
+
+    public function changeLog(): HasMany
+    {
+        return $this->hasMany(ProductLog::class, 'product_id', 'id');
+    }
+
 
 }

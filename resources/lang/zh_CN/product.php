@@ -1,4 +1,4 @@
-<?php 
+<?php
 return [
     'labels' => [
         'Product' => 'Product',
@@ -13,6 +13,7 @@ return [
         'online_price' => '现价',
         'sell' => '销量',
         'status' => '状态',
+        'star' => '特别关注',
     ],
     'options' => [
     ],

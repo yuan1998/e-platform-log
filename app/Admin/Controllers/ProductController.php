@@ -45,7 +45,16 @@ class ProductController extends AdminController
             $grid->column('price')->sortable();
             $grid->column('online_price')->sortable();
             $grid->column('sell')->sortable();
-            $grid->column('status')->using(Product::STATUS);
+            $grid->column('status')->using(Product::STATUS)
+                ->filter(
+                    Grid\Column\Filter\In::make(Product::STATUS)
+                );
+            $grid->column('star')->switch()->filter(
+                Grid\Column\Filter\In::make([
+                    0 => '不关注',
+                    1 => '关注',
+                ])
+            );
             $grid->column('hospital.name', '医院名称');
             $grid->column('platform_type')->using(HospitalInfo::PLATFORM_LIST);
             $grid->column('created_at');
@@ -58,6 +67,7 @@ class ProductController extends AdminController
                     ->where('enable', 1)
                     ->get()->pluck('name', 'id');
                 $filter->equal('hospital_id')->select($hospitals);
+
                 $filter->equal('platform_type')->select(HospitalInfo::PLATFORM_LIST);
 
             });
@@ -105,6 +115,7 @@ class ProductController extends AdminController
             $form->text('online_price');
             $form->text('sell');
             $form->text('status');
+            $form->switch('star');
 
             $form->display('created_at');
             $form->display('updated_at');
