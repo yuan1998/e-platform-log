@@ -16,4 +16,5 @@ Route::group([
 
     $router->resource('/hospital_info', 'HospitalInfoController');
     $router->resource('/products', 'ProductController');
+    $router->resource('/category', 'CategoryController');
 });

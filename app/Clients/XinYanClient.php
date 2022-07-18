@@ -3,6 +3,7 @@
 namespace App\Clients;
 
 
+use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -70,6 +71,7 @@ class XinYanClient extends BaseClient
                 "online_price" => $row['price_online'],
                 "sell" => $row['order_cnt'],
                 "created_at" => $row['create_date'],
+                "category_id" => Category::validateKeyword($row['title']),
                 "status" => Product::ONLINE_STATUS,
             ];
         });

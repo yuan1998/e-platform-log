@@ -7,6 +7,7 @@ use App\Admin\Grid\Tools\PullHospitalTool;
 use App\Admin\Renderable\LineChart;
 use App\Admin\Widgets\Charts\MyAjaxLine;
 use App\Admin\Widgets\Charts\MyLine;
+use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
 use Dcat\Admin\Form;
@@ -26,12 +27,15 @@ class ProductController extends AdminController
      */
     protected function grid()
     {
+        Category::cacheKeyword();
         return Grid::make(Product::with(['hospital']), function (Grid $grid) {
             $grid->scrollbarX();
             $grid->tools(new PullHospitalTool());
+            $grid->disableDeleteButton();
+            $grid->disableQuickEditButton();
+            $grid->disableViewButton();
 
             $grid->column('id')->display(function ($val) {
-
                 return Modal::make()
                     ->lg()
                     ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
@@ -65,8 +69,18 @@ class ProductController extends AdminController
                 $hospitals = HospitalInfo::query()
                     ->select(['name', 'id'])
                     ->where('enable', 1)
-                    ->get()->pluck('name', 'id');
+                    ->get()
+                    ->pluck('name', 'id');
                 $filter->equal('hospital_id')->select($hospitals);
+                $filter->where('category_id', function ($query) {
+                    $val = $this->input;
+                    if ($val) {
+                        $id = Category::allChildrenOfId($val)->pluck('id');
+                        $query->whereIn('category_id', $id);
+                    } else {
+                        $query->where('category_id', 0);
+                    }
+                })->select(Category::selectOptions(null, '无分组'));
 
                 $filter->equal('platform_type')->select(HospitalInfo::PLATFORM_LIST);
 
@@ -107,18 +121,29 @@ class ProductController extends AdminController
     {
         return Form::make(new Product(), function (Form $form) {
             $form->display('id');
-            $form->text('origin_id');
+            $form->display('origin_id');
+            $form->display('platform_type');
+//            $form->text('hospital_id');
             $form->text('name');
-            $form->text('hospital_id');
-            $form->text('platform_type');
-            $form->text('price');
-            $form->text('online_price');
-            $form->text('sell');
-            $form->text('status');
+            $form->decimal('price');
+            $form->decimal('online_price');
+            $form->number('sell');
+            $form->select('status')->options(Product::STATUS);
+            $form->select('category_id')->options(Category::selectOptions(null, '无分组'));
             $form->switch('star');
 
             $form->display('created_at');
             $form->display('updated_at');
+
+            $form->submitted(function (Form $form) {
+                $categoryId = $form->category_id;
+                if ($categoryId) {
+                    if (Category::query()->where('parent_id', $categoryId)->exists()) {
+                        return $form->response()->error('只能选择最后一级的品类~');
+                    }
+                }
+
+            });
         });
     }
 }

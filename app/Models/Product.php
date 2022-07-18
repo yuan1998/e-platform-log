@@ -25,6 +25,7 @@ class Product extends Model
         "status",
         "sell",
         "star",
+        "category_id",
         "created_at",
     ];
 
@@ -56,6 +57,11 @@ class Product extends Model
     public function changeLog(): HasMany
     {
         return $this->hasMany(ProductLog::class, 'product_id', 'id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
 

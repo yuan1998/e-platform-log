@@ -36,6 +36,7 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection password
      * @property Grid\Column|Collection remember_token
      * @property Grid\Column|Collection username
+     * @property Grid\Column|Collection keyword
      * @property Grid\Column|Collection connection
      * @property Grid\Column|Collection exception
      * @property Grid\Column|Collection failed_at
@@ -59,6 +60,7 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection hospital_id
      * @property Grid\Column|Collection online_price
      * @property Grid\Column|Collection price
+     * @property Grid\Column|Collection star
      * @property Grid\Column|Collection status
      * @property Grid\Column|Collection email_verified_at
      *
@@ -87,6 +89,7 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection password(string $label = null)
      * @method Grid\Column|Collection remember_token(string $label = null)
      * @method Grid\Column|Collection username(string $label = null)
+     * @method Grid\Column|Collection keyword(string $label = null)
      * @method Grid\Column|Collection connection(string $label = null)
      * @method Grid\Column|Collection exception(string $label = null)
      * @method Grid\Column|Collection failed_at(string $label = null)
@@ -110,6 +113,7 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection hospital_id(string $label = null)
      * @method Grid\Column|Collection online_price(string $label = null)
      * @method Grid\Column|Collection price(string $label = null)
+     * @method Grid\Column|Collection star(string $label = null)
      * @method Grid\Column|Collection status(string $label = null)
      * @method Grid\Column|Collection email_verified_at(string $label = null)
      */
@@ -143,6 +147,7 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection password
      * @property Show\Field|Collection remember_token
      * @property Show\Field|Collection username
+     * @property Show\Field|Collection keyword
      * @property Show\Field|Collection connection
      * @property Show\Field|Collection exception
      * @property Show\Field|Collection failed_at
@@ -166,6 +171,7 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection hospital_id
      * @property Show\Field|Collection online_price
      * @property Show\Field|Collection price
+     * @property Show\Field|Collection star
      * @property Show\Field|Collection status
      * @property Show\Field|Collection email_verified_at
      *
@@ -194,6 +200,7 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection password(string $label = null)
      * @method Show\Field|Collection remember_token(string $label = null)
      * @method Show\Field|Collection username(string $label = null)
+     * @method Show\Field|Collection keyword(string $label = null)
      * @method Show\Field|Collection connection(string $label = null)
      * @method Show\Field|Collection exception(string $label = null)
      * @method Show\Field|Collection failed_at(string $label = null)
@@ -217,6 +224,7 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection hospital_id(string $label = null)
      * @method Show\Field|Collection online_price(string $label = null)
      * @method Show\Field|Collection price(string $label = null)
+     * @method Show\Field|Collection star(string $label = null)
      * @method Show\Field|Collection status(string $label = null)
      * @method Show\Field|Collection email_verified_at(string $label = null)
      */

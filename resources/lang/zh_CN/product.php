@@ -14,6 +14,7 @@ return [
         'sell' => '销量',
         'status' => '状态',
         'star' => '特别关注',
+        'category_id' => '品项分组',
     ],
     'options' => [
     ],
