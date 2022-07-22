@@ -101,7 +101,6 @@ class XinYanClient extends BaseClient
             }
             $rows = $rows->merge($result['rows']);
             $page++;
-            sleep(1);
         } while ($page <= $last_page);
 
         return $rows->unique('origin_id');
