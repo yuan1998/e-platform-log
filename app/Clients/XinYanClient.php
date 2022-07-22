@@ -62,16 +62,18 @@ class XinYanClient extends BaseClient
         $rows = data_get($result, 'data.list');
 
         $result = collect($rows)->map(function ($row) {
+            $title = $row['title'];
+            $id  = Category::validateKeyword($title);
             return [
                 'origin_id' => $row['pid'],
-                'name' => $row['title'],
+                'name' => $title,
                 "hospital_id" => $this->hospital->id,
                 "platform_type" => $this->hospital->platform_type,
                 "price" => $row['price_origin_online'],
                 "online_price" => $row['price_online'],
                 "sell" => $row['order_cnt'],
                 "created_at" => $row['create_date'],
-                "category_id" => Category::validateKeyword($row['title']),
+                "category_id" => $id ,
                 "status" => Product::ONLINE_STATUS,
             ];
         });

@@ -64,8 +64,7 @@ class Category extends Model
 
     public static function getKeywords()
     {
-        $value = Cache::get(self::CACHE_KEY);
-        if (!$value) {
+        if (!$value = Cache::get(self::CACHE_KEY)) {
             return static::cacheKeyword();
         }
 
@@ -76,7 +75,7 @@ class Category extends Model
     {
         $keyword = static::getKeywords();
         $item = $keyword->first(function ($item) use ($text) {
-            return preg_match("/({$item})/", $text);
+            return preg_match("/({$item['keyword']})/", $text);
         });
 
         return $item ? $item['id'] : 0;
@@ -91,7 +90,7 @@ class Category extends Model
             ->get();
 
         $data = $notChildren->map(function ($val) {
-            $val['keyword'] = str_replace(',', '|', $val);
+            $val['keyword'] = str_replace(',', '|', $val['keyword']);
             return $val;
         });
 
