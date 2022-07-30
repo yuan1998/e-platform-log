@@ -40,7 +40,7 @@ class ProductController extends AdminController
             $grid->column('id')->display(function ($val) {
                 return Modal::make()
                     ->lg()
-                    ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
+                    ->delay(300)
 //                    ->($dropdown)
                     ->title($this->name)
                     ->body(LineChart::make(['id' => $val]))
@@ -50,7 +50,7 @@ class ProductController extends AdminController
                 $id = $this->id;
 
                 return Modal::make()
-                    ->lg()
+                    ->xl()
                     ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
 //                    ->($dropdown)
                     ->title($this->name)
