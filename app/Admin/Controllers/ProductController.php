@@ -3,8 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Tools\MultipleProductLineChart;
+use App\Admin\Forms\CategoryForm;
 use App\Admin\Grid\Tools\PullHospitalTool;
 use App\Admin\Renderable\LineChart;
+use App\Admin\Renderable\ProductLogRenderable;
 use App\Admin\Widgets\Charts\MyAjaxLine;
 use App\Admin\Widgets\Charts\MyLine;
 use App\Models\Category;
@@ -28,7 +30,7 @@ class ProductController extends AdminController
     protected function grid()
     {
         Category::cacheKeyword();
-        return Grid::make(Product::with(['hospital']), function (Grid $grid) {
+        return Grid::make(Product::with(['hospital', 'category']), function (Grid $grid) {
             $grid->scrollbarX();
             $grid->tools(new PullHospitalTool());
             $grid->disableDeleteButton();
@@ -44,10 +46,37 @@ class ProductController extends AdminController
                     ->body(LineChart::make(['id' => $val]))
                     ->button('<button class="btn btn-white"><i class="feather icon-bar-chart-2"></i></button>');
             });
+            $grid->column('__','日志')->display(function () {
+                $id = $this->id;
+
+                return Modal::make()
+                    ->lg()
+                    ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
+//                    ->($dropdown)
+                    ->title($this->name)
+                    ->body(ProductLogRenderable::make(['id' => $id]))
+                    ->button('<button class="btn btn-white"><i class="feather icon-file-text"></i></button>');
+            });
 //            $grid->column('origin_id');
             $grid->column('name');
             $grid->column('price')->sortable();
             $grid->column('online_price')->sortable();
+            $grid->column('category', '分类')
+                ->display(function ($val) {
+
+                    $txt = $this->category_id ? $val['title'] : '无分组';
+
+                    return Modal::make()
+                        ->lg()
+                        ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
+//                    ->($dropdown)
+                        ->title('修改分类')
+                        ->body(CategoryForm::make()->payload([
+                            'id' => $this->id,
+                            'category_id' => $this->category_id ?? 0
+                        ]))
+                        ->button('<button class="btn btn-white">' . $txt . '</i></button>');
+                });
             $grid->column('sell')->sortable();
             $grid->column('status')->using(Product::STATUS)
                 ->filter(
@@ -131,6 +160,19 @@ class ProductController extends AdminController
             $form->select('status')->options(Product::STATUS);
             $form->select('category_id')->options(Category::selectOptions(null, '无分组'));
             $form->switch('star');
+            $form->embeds('comments','备注s', function ($form) {
+
+                $form->textarea('同类产品');
+                $form->textarea('上游产品');
+                $form->textarea('下游产品');
+                $form->textarea('优势');
+                $form->textarea('劣势');
+                $form->textarea('咨询引导话术');
+                $form->textarea('备注');
+            })->saving(function ($v) {
+                // 转化为json格式存储
+                return json_encode($v);
+            });
 
             $form->display('created_at');
             $form->display('updated_at');

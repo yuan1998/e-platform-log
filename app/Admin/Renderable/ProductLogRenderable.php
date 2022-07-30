@@ -3,7 +3,9 @@
 namespace App\Admin\Renderable;
 
 use App\Admin\Widgets\Charts\MyAjaxLine;
+use App\Models\Product;
 use App\Models\ProductLog;
+use Carbon\Carbon;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Support\LazyRenderable;
 use Dcat\Admin\Widgets\Box;
@@ -15,21 +17,21 @@ class ProductLogRenderable extends LazyRenderable
     {
         $id = $this->id;
 
-        return Grid::make(ProductLog::query()->where('product_id',$id), function (Grid $grid) {
+        return Grid::make(ProductLog::query()->where('product_id', $id)->orderBy('date','desc'), function (Grid $grid) {
+            $grid->scrollbarX();
+            $grid->column('date','日期')->display(function ($val) {
+                return Carbon::parse($val)->toDateString();
+            });
+            $grid->column('field','字段')->using(Product::LOG_FIELDS);
+            $grid->column('action','行为');
 
-            $grid->column('date');
-            $grid->column('name');
-            $grid->column('field');
-            $grid->column('updated_at');
+            $grid->quickSearch([ 'field']);
 
-            $grid->quickSearch(['id', 'username', 'name']);
-
-            $grid->paginate(10);
             $grid->disableActions();
+            $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->like('username')->width(4);
-                $filter->like('name')->width(4);
+                $filter->like('field')->width(4);
             });
         });
     }

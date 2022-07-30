@@ -27,6 +27,11 @@ class Product extends Model
         "star",
         "category_id",
         "created_at",
+        "comments",
+    ];
+
+    protected $casts = [
+        'comments' => 'json'
     ];
 
     const ONLINE_STATUS = 0;

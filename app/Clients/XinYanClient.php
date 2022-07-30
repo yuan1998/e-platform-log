@@ -63,8 +63,7 @@ class XinYanClient extends BaseClient
 
         $result = collect($rows)->map(function ($row) {
             $title = $row['title'];
-            $id  = Category::validateKeyword($title);
-            return [
+            $result = [
                 'origin_id' => $row['pid'],
                 'name' => $title,
                 "hospital_id" => $this->hospital->id,
@@ -73,9 +72,13 @@ class XinYanClient extends BaseClient
                 "online_price" => $row['price_online'],
                 "sell" => $row['order_cnt'],
                 "created_at" => $row['create_date'],
-                "category_id" => $id ,
                 "status" => Product::ONLINE_STATUS,
             ];
+            if ($id = Category::validateKeyword($title)) {
+                $result["category_id"] = $id;
+            }
+
+            return $result;
         });
 
         return [
