@@ -39,8 +39,18 @@ class ClientProductPullJob implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->hospitalInfo)
-            $this->hospitalInfo->getProducts($this->type, $this->date);
+        if ($this->hospitalInfo) {
+            try {
+                $this->hospitalInfo->getProducts($this->type, $this->date);
+            } catch (\GuzzleHttp\Exception\ClientException $exception) {
+                $response = $exception->getResponse();
+                $statusCode = $response->getStatusCode();
+                if ($statusCode === 403) {
+                    $this->release(60 * 30);
+                }
+            }
+
+        }
 
 
     }
