@@ -100,7 +100,7 @@ class ProductController extends AdminController
                     ->where('enable', 1)
                     ->get()
                     ->pluck('name', 'id');
-                $filter->equal('hospital_id')->select($hospitals);
+                $filter->in('hospital_id')->multipleSelect($hospitals);
                 $filter->where('category_id', function ($query) {
                     $val = $this->input;
                     if ($val) {
