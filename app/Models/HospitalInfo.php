@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Clients\DaZhongClient;
 use App\Clients\XinYanClient;
+use App\Jobs\ClientProductPullJob;
 use Carbon\Carbon;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Exception;
@@ -16,12 +18,17 @@ class HospitalInfo extends Model
     use HasFactory;
     use HasDateTimeFormatter;
 
+    const XINYAN_ID = 0;
+    const DAZHONG_ID = 1;
+
     const PLATFORM_LIST = [
-        0 => '新氧',
+        self::XINYAN_ID => '新氧',
+        self::DAZHONG_ID => '大众',
     ];
 
     const PLATFORM_CLIENT = [
-        0 => XinYanClient::class,
+        self::XINYAN_ID => XinYanClient::class,
+        self::DAZHONG_ID => DaZhongClient::class,
     ];
 
     protected $fillable = [
@@ -30,14 +37,17 @@ class HospitalInfo extends Model
         'origin_id',
         'platform_type',
         'enable',
+        'dz_origin_id',
+        'dz_url',
+        'dz_enable',
     ];
 
     /**
      * @throws Exception
      */
-    public function client(): XinYanClient
+    public function getClient($type)
     {
-        $klass = data_get(self::PLATFORM_CLIENT, $this->platform_type);
+        $klass = data_get(self::PLATFORM_CLIENT, $type);
         if (!$klass)
             throw new Exception("Oops! Can not find client Class, pls Check.");
 
@@ -48,9 +58,9 @@ class HospitalInfo extends Model
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getProducts($date = null, $logSell = true)
+    public function getProducts($type = self::XINYAN_ID, $date = null, $logSell = true)
     {
-        $rows = $this->client()->search();
+        $rows = $this->getClient($type)->search();
         $yesterday = $date ?: Carbon::yesterday()->toDateTime();
 
         $ids = [];
@@ -68,6 +78,7 @@ class HospitalInfo extends Model
 
         Product::query()
             ->where('hospital_id', $this->id)
+            ->where('platform_type', $type)
             ->whereNotIn('id', $ids)
             ->update([
                 'status' => Product::OFFLINE_STATUS
@@ -78,10 +89,14 @@ class HospitalInfo extends Model
 
     public static function pullAll()
     {
-        $hospital = HospitalInfo::query()->where('enable', 1)->get();
+        $hospital = HospitalInfo::all();
         $date = Carbon::today()->toDateString();
         foreach ($hospital as $item) {
-            $item->getProducts($date);
+            if ($item['enable'] && $item['origin_id'])
+                ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client');
+
+            if ($item['dz_enable'] && $item['dz_origin_id'])
+                ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client');
         }
 
     }

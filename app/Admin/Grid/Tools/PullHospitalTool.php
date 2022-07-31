@@ -63,7 +63,7 @@ JS;
     {
         // 你的代码逻辑
         HospitalInfo::pullAll();
-        return $this->response()->success('获取成功')->refresh();
+        return $this->response()->success('开始队列获取,请耐心等待运行结束~')->refresh();
     }
 
     /**

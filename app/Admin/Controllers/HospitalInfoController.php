@@ -65,23 +65,39 @@ class HospitalInfoController extends AdminController
         return Form::make(new HospitalInfo(), function (Form $form) {
             $form->display('id');
             $form->text('name');
-            $form->text('url');
-            $form->hidden('origin_id');
-            $form->select('platform_type')->options(HospitalInfo::PLATFORM_LIST)->default(0);
 
-            $form->switch('enable')->default(1);
+            $form->switch('enable','新氧开关')->default(1);
+            $form->text('url','新氧链接');
+            $form->hidden('origin_id');
+
+            $form->switch('dz_enable','大众开关')->default(1);
+            $form->text('dz_url','大众链接');
+            $form->hidden('dz_origin_id');
 
             $form->display('created_at');
             $form->display('updated_at');
 
             $form->submitted(function (Form $form) {
-                $url = $form->url;
-                preg_match('/(\d+)/', $url, $matches);
-                $id = data_get($matches, 1);
-                if (!$id)
-                    return $form->response()->error('出错了,无法匹配到原始ID~');
+                if($form->enable) {
+                    $url = $form->url;
+                    preg_match('/(\d+)/', $url, $matches);
+                    $id = data_get($matches, 1);
+                    if (!$id)
+                        return $form->response()->error('出错了,无法匹配到原始ID~');
 
-                $form->input('origin_id', $id);
+                    $form->input('origin_id', $id);
+                }
+                if($form->dz_enable) {
+                    $url = $form->dz_url;
+                    preg_match('/\/(\w+)$/', $url, $matches);
+                    $id = data_get($matches, 1);
+
+                    if (!$id)
+                        return $form->response()->error('出错了,无法匹配到原始ID~');
+
+                    $form->input('dz_origin_id', $id);
+                }
+
 
             });
         });

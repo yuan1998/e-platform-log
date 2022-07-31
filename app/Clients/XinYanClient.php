@@ -67,7 +67,7 @@ class XinYanClient extends BaseClient
                 'origin_id' => $row['pid'],
                 'name' => $title,
                 "hospital_id" => $this->hospital->id,
-                "platform_type" => $this->hospital->platform_type,
+                "platform_type" => HospitalInfo::XINYAN_ID,
                 "price" => $row['price_origin_online'],
                 "online_price" => $row['price_online'],
                 "sell" => $row['order_cnt'],
