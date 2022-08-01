@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ClientProductPullJob implements ShouldQueue
 {
@@ -45,7 +46,20 @@ class ClientProductPullJob implements ShouldQueue
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();
                 $statusCode = $response->getStatusCode();
+                Log::info('发生错误', [
+                    'code' => $statusCode,
+                    'msg' => $exception->getMessage(),
+                ]);
                 if ($statusCode === 403) {
+                    $this->release(60 * 30);
+                }
+            } catch (\Exception $exception) {
+                $statusCode = $exception->getCode();
+                Log::info('发生错误', [
+                    'code' => $statusCode,
+                    'msg' => $exception->getMessage(),
+                ]);
+                if ($statusCode === 500) {
                     $this->release(60 * 30);
                 }
             }

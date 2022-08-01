@@ -95,6 +95,10 @@ class DaZhongClient extends BaseClient
             ]
         ]);
         $body = $response->getBody()->getContents();
+        if (preg_match("/验证中心/", $body)) {
+            throw new \Exception('拉取数据错误,进入验证', 500);
+        }
+
         $dom = new Dom;
         $dom->loadStr($body);
         $list = $dom->find('#sales .group a.item,#sales .group .item a');
