@@ -12,6 +12,8 @@ use PHPHtmlParser\Dom;
 class DaZhongClient extends BaseClient
 {
 
+    public $ua;
+
     public function searchApi($data = [])
     {
         $data = array_merge([
@@ -33,7 +35,7 @@ class DaZhongClient extends BaseClient
                 "sec-ch-ua-mobile" => '?0',
                 "sec-ch-ua-platform" => '"macOS"',
                 "Upgrade-Insecure-Requests" => '1',
-                "User-Agent" => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 Edg/94.0.992.31',
+                "User-Agent" => $this->ua,
                 "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                 "Sec-Fetch-Site" => 'none',
                 "Sec-Fetch-Mode" => 'navigate',
@@ -70,6 +72,9 @@ class DaZhongClient extends BaseClient
 
     public function search()
     {
+        $this->ua = \Campo\UserAgent::random([
+            'os_type' => 'Windows',
+        ]);
         $response = $this->get($this->hospital->dz_url, [
             'headers' => [
                 "Connection" => 'keep-alive',
@@ -78,7 +83,7 @@ class DaZhongClient extends BaseClient
                 "sec-ch-ua-mobile" => '?0',
                 "sec-ch-ua-platform" => '"macOS"',
                 "Upgrade-Insecure-Requests" => '1',
-                "User-Agent" => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 Edg/94.0.992.31',
+                "User-Agent" => $this->ua,
                 "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                 "Sec-Fetch-Site" => 'none',
                 "Sec-Fetch-Mode" => 'navigate',
