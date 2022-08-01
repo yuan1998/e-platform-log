@@ -6,6 +6,7 @@ namespace App\Clients;
 use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
+use Campo\UserAgent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use PHPHtmlParser\Dom;
@@ -73,7 +74,7 @@ class DaZhongClient extends BaseClient
 
     public function search()
     {
-        $this->ua = \Campo\UserAgent::random([
+        $this->ua = UserAgent::random([
             'device_type' => 'Desktop',
         ]);
         $response = $this->get($this->hospital->dz_url, [

@@ -1,8 +1,8 @@
-<?php 
+<?php
 return [
     'labels' => [
-        'HospitalInfo' => 'HospitalInfo',
-        'hospital-info' => 'HospitalInfo',
+        'HospitalInfo' => '医院平台列表',
+        'hospital-info' => '医院平台列表',
     ],
     'fields' => [
         'name' => '医院名称',

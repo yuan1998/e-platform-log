@@ -1,8 +1,8 @@
 <?php
 return [
     'labels' => [
-        'Product' => 'Product',
-        'product' => 'Product',
+        'Product' => '商品列表',
+        'product' => '商品列表',
     ],
     'fields' => [
         'origin_id' => '原始ID',
