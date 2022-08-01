@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use PHPHtmlParser\Dom;
 
 class DaZhongClient extends BaseClient
@@ -97,6 +98,12 @@ class DaZhongClient extends BaseClient
         $dom->loadStr($body);
         $list = $dom->find('#sales .group a.item,#sales .group .item a');
         $result = [];
+
+        if ($list->count() === 0) {
+            Log::info($body);
+            return $result;
+        }
+
         foreach ($list as $item) {
             $href = $item->getAttribute('href');
             if (!$href) continue;
