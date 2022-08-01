@@ -70,7 +70,7 @@ class DaZhongClient extends BaseClient
 
     public function search()
     {
-        $response = $this->get('https://www.dianping.com/shop/l7LpxQ7ByObBbXls', [
+        $response = $this->get($this->hospital->dz_url, [
             'headers' => [
                 "Connection" => 'keep-alive',
                 "Cache-Control" => 'max-age=0',
