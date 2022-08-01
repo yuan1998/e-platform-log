@@ -96,6 +96,9 @@ class DaZhongClient extends BaseClient
         ]);
         $body = $response->getBody()->getContents();
         if (preg_match("/验证中心/", $body)) {
+            Log::info('大众.拉取数据错误,进入验证', [
+                'name' => $this->hospital->name
+            ]);
             throw new \Exception('拉取数据错误,进入验证', 500);
         }
 
