@@ -74,7 +74,7 @@ class DaZhongClient extends BaseClient
     public function search()
     {
         $this->ua = \Campo\UserAgent::random([
-            'os_type' => 'Windows',
+            'device_type' => 'Desktop',
         ]);
         $response = $this->get($this->hospital->dz_url, [
             'headers' => [

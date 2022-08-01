@@ -6,9 +6,11 @@ use App\Clients\DaZhongClient;
 use App\Clients\XinYanClient;
 use App\Jobs\ClientProductPullJob;
 use Carbon\Carbon;
+use Closure;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -86,17 +88,44 @@ class HospitalInfo extends Model
 
     }
 
-
-    public static function pullAll()
+    public function scopeTypeQuery(Builder $query, $type)
     {
-        $hospital = HospitalInfo::all();
+        foreach ($type as $v) {
+            switch ($v) {
+                case "0":
+                    $query->where('enable', true);
+                    break;
+                case "1":
+                    $query->where('dz_enable', true);
+                    break;
+            }
+        }
+    }
+
+
+    public static function pullAll(Closure $callback = null, $queue = true)
+    {
+        $query = HospitalInfo::query();
+        if ($callback) {
+            call_user_func($callback, $query);
+        }
+
+        $hospital = $query->get();
         $date = Carbon::today()->toDateString();
         foreach ($hospital as $item) {
-            if ($item['enable'] && $item['origin_id'])
-                ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client');
+            if ($item['enable'] && $item['origin_id']) {
+                if ($queue)
+                    ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client');
+                else
+                    $item->getProducts(self::XINYAN_ID, $date);
+            }
 
-            if ($item['dz_enable'] && $item['dz_origin_id'])
-                ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client');
+            if ($item['dz_enable'] && $item['dz_origin_id']) {
+                if ($queue)
+                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client');
+                else
+                    $item->getProducts(self::DAZHONG_ID, $date);
+            }
         }
 
     }
