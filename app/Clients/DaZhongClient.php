@@ -50,7 +50,14 @@ class DaZhongClient extends BaseClient
         $result = json_decode($content, true);
 
         $title = data_get($result, 'data.productItems.0.name');
-        if (!$title) return null;
+        if (!$title) {
+            Log::info('>>>>>>>>>>>>>大众.获取商品详情出错', [
+                'name' => $this->hospital->name,
+                'content' => $content,
+                'data' => $data
+            ]);
+            return null;
+        }
 
         $r = [
             'origin_id' => data_get($result, 'data.productItems.0.id'),
@@ -71,11 +78,14 @@ class DaZhongClient extends BaseClient
 
     }
 
-
     public function search()
     {
+        $t1 = microtime(true);
         $this->ua = UserAgent::random([
             'device_type' => 'Desktop',
+        ]);
+        Log::info('1.>>>>大众.拉取', [
+            'name' => $this->hospital->name
         ]);
         $response = $this->get($this->hospital->dz_url, [
             'headers' => [
@@ -99,6 +109,8 @@ class DaZhongClient extends BaseClient
             Log::info('大众.拉取数据错误,进入验证', [
                 'name' => $this->hospital->name
             ]);
+            dd($body);
+
             throw new \Exception('拉取数据错误,进入验证', 500);
         }
 
@@ -107,7 +119,13 @@ class DaZhongClient extends BaseClient
         $list = $dom->find('#sales .group a.item,#sales .group .item a');
         $result = [];
 
-        if ($list->count() === 0) {
+        $count = $list->count();
+        Log::info('2.>>>>大众.拉取:获取商品数量', [
+            'name' => $this->hospital->name,
+            'count' => $count,
+        ]);
+
+        if ($count === 0) {
             Log::info($body);
             return $result;
         }
@@ -127,6 +145,11 @@ class DaZhongClient extends BaseClient
 
             $result[] = $response;
         }
+        $t2 = microtime(true);
+        Log::info('3.>>>>大众.拉取:结束', [
+            'name' => $this->hospital->name,
+            'time' => '耗时' . round($t2 - $t1, 3) . '秒',
+        ]);
         return $result;
 
     }
