@@ -103,7 +103,7 @@ class HospitalInfo extends Model
     }
 
 
-    public static function pullAll(Closure $callback = null, $queue = true)
+    public static function pullAll(Closure $callback = null, $queue = true, $date = null)
     {
         $query = HospitalInfo::query();
         if ($callback) {
@@ -111,7 +111,7 @@ class HospitalInfo extends Model
         }
 
         $hospital = $query->get();
-        $date = Carbon::today()->toDateString();
+        $date = $date ?? Carbon::today()->toDateString();
         foreach ($hospital as $item) {
             if ($item['enable'] && $item['origin_id']) {
                 if ($queue)

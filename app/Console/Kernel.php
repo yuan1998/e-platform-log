@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\HospitalInfo;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -20,10 +21,9 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->call(function () {
-            $hospital = HospitalInfo::query()->where('enable', 1)->get();
-            foreach ($hospital as $item) {
-                $item->getProducts();
-            }
+            $date = Carbon::yesterday()->toDateString();
+            HospitalInfo::pullAll(null, true, $date);
+
         })->dailyAt("00:05");
 
         $schedule->command('backup:clean')->daily()->at('01:00');
