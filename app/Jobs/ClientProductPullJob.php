@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\HospitalInfo;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -67,5 +68,23 @@ class ClientProductPullJob implements ShouldQueue
         }
 
 
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param Exception $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        Log::info('发生错误', [
+            'code' => $exception->getCode(),
+            'msg' => $exception->getMessage(),
+            'hospital' => $this->hospitalInfo,
+            'type' => $this->type,
+        ]);
+
+        // Send user notification of failure, etc...
     }
 }
