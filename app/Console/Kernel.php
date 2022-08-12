@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $date = Carbon::today()->toDateString();
             HospitalInfo::pullAll(null, true, $date);
-        })->dailyAt("16:50");
+        })->dailyAt("11:50");
 
         $schedule->command('backup:clean')->daily()->at('01:00');
         $schedule->command('backup:run')->daily()->at('01:30');
