@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         })->dailyAt("11:50");
 
         $schedule->command('backup:clean')->daily()->at('01:00');
-        $schedule->command('backup:run')->daily()->at('01:30');
+        $schedule->command('backup:run --disable-notifications')->daily()->at('01:30');
 
     }
 
