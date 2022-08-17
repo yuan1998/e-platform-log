@@ -43,6 +43,7 @@ class ClientProductPullJob implements ShouldQueue
     {
         if ($this->hospitalInfo) {
             try {
+                Log::info('开始拉取', ['name' => $this->hospitalInfo->name, 'type' => $this->type]);
                 $this->hospitalInfo->getProducts($this->type, $this->date);
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();
