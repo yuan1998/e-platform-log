@@ -109,8 +109,6 @@ class DaZhongClient extends BaseClient
             Log::info('大众.拉取数据错误,进入验证', [
                 'name' => $this->hospital->name
             ]);
-            dd($body);
-
             throw new \Exception('拉取数据错误,进入验证', 500);
         }
 
@@ -126,7 +124,6 @@ class DaZhongClient extends BaseClient
         ]);
 
         if ($count === 0) {
-            Log::info($body);
             return $result;
         }
 
