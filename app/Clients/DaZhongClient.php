@@ -133,6 +133,7 @@ class DaZhongClient extends BaseClient
             $query_str = parse_url($href, PHP_URL_QUERY);
             parse_str($query_str, $query_params);
             if (!isset($query_params['productid'])) continue;
+            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息',[$query_params["productid"]]);
             $response = $this->searchApi([
                 "productid" => $query_params["productid"],
                 "shopid" => $query_params["shopid"],
