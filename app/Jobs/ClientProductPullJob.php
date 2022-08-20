@@ -53,7 +53,7 @@ class ClientProductPullJob implements ShouldQueue
                     'msg' => $exception->getMessage(),
                 ]);
                 if ($statusCode === 403) {
-                    $this->release(60 * 30);
+                    $this->release(60 * 50);
                 }
             } catch (\Exception $exception) {
                 $statusCode = $exception->getCode();
