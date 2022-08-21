@@ -85,7 +85,9 @@ class ClientProductPullJob implements ShouldQueue
             'hospital' => $this->hospitalInfo,
             'type' => $this->type,
         ]);
-
+        if ($this->attempts() <= 3) {
+            $this->release(60*15);
+        }
         // Send user notification of failure, etc...
     }
 }
