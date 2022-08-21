@@ -28,6 +28,7 @@ class DaZhongClient extends BaseClient
             "cityid" => "1",
         ], $data);
 
+        Log::info('2.2   >>>>>>>>大众.拉取:获取商品信息');
         $response = $this->get('https://mapi.dianping.com/dzbook/prepayproductdetail.json2', [
             'query' => $data,
             'headers' => [
@@ -46,9 +47,10 @@ class DaZhongClient extends BaseClient
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
             ]
         ]);
+        Log::info('2.3   >>>>>>>>大众.拉取:获取商品信息');
         $content = $response->getBody()->getContents();
         $result = json_decode($content, true);
-
+        Log::info('2.4   >>>>>>>>大众.拉取:获取商品信息');
         $title = data_get($result, 'data.productItems.0.name');
         if (!$title) {
             Log::info('>>>>>>>>>>>>>大众.获取商品详情出错', [
@@ -58,7 +60,7 @@ class DaZhongClient extends BaseClient
             ]);
             return null;
         }
-
+        Log::info('2.5   >>>>>>>>大众.拉取:获取商品信息');
         $r = [
             'origin_id' => data_get($result, 'data.productItems.0.id'),
             'name' => $title,
@@ -73,7 +75,7 @@ class DaZhongClient extends BaseClient
         if ($id = Category::validateKeyword($title)) {
             $r["category_id"] = $id;
         }
-
+        Log::info('2.6   >>>>>>>>大众.拉取:获取商品信息');
         return $r;
 
     }
@@ -133,14 +135,15 @@ class DaZhongClient extends BaseClient
             $query_str = parse_url($href, PHP_URL_QUERY);
             parse_str($query_str, $query_params);
             if (!isset($query_params['productid'])) continue;
-            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息',[$query_params["productid"]]);
+            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$query_params["productid"]]);
             $response = $this->searchApi([
                 "productid" => $query_params["productid"],
                 "shopid" => $query_params["shopid"],
                 "shopuuid" => $query_params["shopuuid"]
             ]);
+            Log::info('2.7   >>>>>>>>大众.拉取:获取商品信息');
             if (!$response) continue;
-
+            Log::info('2.8   >>>>>>>>大众.拉取:获取商品信息');
             $result[] = $response;
         }
         $t2 = microtime(true);
