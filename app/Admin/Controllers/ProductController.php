@@ -37,6 +37,8 @@ class ProductController extends AdminController
             $grid->disableQuickEditButton();
             $grid->disableViewButton();
 
+            $grid->export();
+
             $grid->column('id')->display(function ($val) {
                 return Modal::make()
                     ->lg()
