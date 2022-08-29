@@ -14,7 +14,7 @@ class ChangeHospitalInfoChangeFieldPlatformTypeNullable extends Migration
     public function up()
     {
         Schema::table('hospital_infos', function (Blueprint $table) {
-            $table->unsignedInteger('platform_type')->nullable()->change();
+            $table->unsignedInteger('platform_type')->default(0)->nullable()->change();
 
         });
     }
