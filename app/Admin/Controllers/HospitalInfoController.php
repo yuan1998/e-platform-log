@@ -20,10 +20,25 @@ class HospitalInfoController extends AdminController
         return Grid::make(new HospitalInfo(), function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('name');
-//            $grid->column('url');
-            $grid->column('origin_id');
-            $grid->column('platform_type')->using(HospitalInfo::PLATFORM_LIST);
-            $grid->column('enable')->switch();
+
+            $grid->column('enable', '新氧')
+                ->if(function () {
+                    return !!$this->origin_id;
+                })
+                ->switch()
+                ->else()
+                ->display(function () {
+                    return '未配置';
+                });
+            $grid->column('dz_enable', '大众')
+                ->if(function () {
+                    return !!$this->dz_origin_id;
+                })
+                ->switch()
+                ->else()
+                ->display(function () {
+                    return '未配置';
+                });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
@@ -66,19 +81,19 @@ class HospitalInfoController extends AdminController
             $form->display('id');
             $form->text('name');
 
-            $form->switch('enable','新氧开关')->default(1);
-            $form->text('url','新氧链接');
+            $form->switch('enable', '新氧开关')->default(1);
+            $form->text('url', '新氧链接');
             $form->hidden('origin_id');
 
-            $form->switch('dz_enable','大众开关')->default(1);
-            $form->text('dz_url','大众链接');
+            $form->switch('dz_enable', '大众开关')->default(1);
+            $form->text('dz_url', '大众链接');
             $form->hidden('dz_origin_id');
 
             $form->display('created_at');
             $form->display('updated_at');
 
             $form->submitted(function (Form $form) {
-                if($form->enable) {
+                if ($form->enable) {
                     $url = $form->url;
                     preg_match('/(\d+)/', $url, $matches);
                     $id = data_get($matches, 1);
@@ -87,7 +102,7 @@ class HospitalInfoController extends AdminController
 
                     $form->input('origin_id', $id);
                 }
-                if($form->dz_enable) {
+                if ($form->dz_enable) {
                     $url = $form->dz_url;
                     preg_match('/\/(\w+)$/', $url, $matches);
                     $id = data_get($matches, 1);
