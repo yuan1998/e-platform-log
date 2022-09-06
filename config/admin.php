@@ -366,7 +366,7 @@ return [
         'dir' => base_path('dcat-admin-extensions'),
         'media-manager' => [
             // 'disk'        => 'public',
-            'disk' => ['public', 'admin'], // 仅 v1.03 后支持多文件
+            'disk' => ['public'], // 仅 v1.03 后支持多文件
             // 'allowed_ext' => 'jpg,jpeg,png,pdf,doc,docx,zip'
         ]
     ],
