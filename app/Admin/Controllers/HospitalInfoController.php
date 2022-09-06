@@ -98,7 +98,7 @@ class HospitalInfoController extends AdminController
                     preg_match('/(\d+)/', $url, $matches);
                     $id = data_get($matches, 1);
                     if (!$id)
-                        return $form->response()->error('出错了,无法匹配到原始ID~');
+                        return $form->response()->error('出错了,无法匹配到新氧ID~');
 
                     $form->input('origin_id', $id);
                 }
@@ -108,12 +108,10 @@ class HospitalInfoController extends AdminController
                     $id = data_get($matches, 1);
 
                     if (!$id)
-                        return $form->response()->error('出错了,无法匹配到原始ID~');
+                        return $form->response()->error('出错了,无法匹配到大众ID~');
 
                     $form->input('dz_origin_id', $id);
                 }
-
-
             });
         });
     }
