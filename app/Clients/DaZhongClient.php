@@ -80,6 +80,96 @@ class DaZhongClient extends BaseClient
 
     }
 
+    public function searchMobile()
+    {
+        $url = str_replace('www', 'm', $this->hospital->dz_url);
+        $response = $this->get($url, [
+            'headers' => [
+                "Connection" => 'keep-alive',
+                "Cache-Control" => 'max-age=0',
+                "sec-ch-ua" => '"Chromium";v="94", "Microsoft Edge";v="94", ";Not A Brand";v="99"',
+                "sec-ch-ua-mobile" => '?0',
+                "sec-ch-ua-platform" => '"macOS"',
+                "Upgrade-Insecure-Requests" => '1',
+                "User-Agent" => $this->ua,
+                "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                "Sec-Fetch-Site" => 'none',
+                "Sec-Fetch-Mode" => 'navigate',
+                "Sec-Fetch-User" => '?1',
+                "Sec-Fetch-Dest" => 'document',
+                "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+            ]
+        ]);
+        $body = $response->getBody()->getContents();
+
+        $dom = new Dom;
+        $dom->loadStr($body);
+        $list = $dom->find('#newTuan .tuanItem');
+        $result = [];
+
+        $count = $list->count();
+        Log::info('2.1>>>>大众.拉取移动端:获取商品数量', [
+            'name' => $this->hospital->name,
+            'count' => $count,
+        ]);
+        if (!$count) return $result;
+
+        foreach ($list as $item) {
+            $id = $item->getAttribute('data-id');
+            if (!$id) continue;
+            $title = $item->find('.tuanTitle')->innerText;
+            $price = @$item->find('.tuanPrice')->innerText ?? "";
+            $price = str_replace("￥" , '' ,$price);
+
+            $originPrice = @$item->find('.lineThrough')->innerText ?? "";
+            $originPrice = str_replace("￥" , '' ,$originPrice);
+
+            $sale = @$item->find('.tuanSale .sold')->innerText ?? "0";
+            $sale = str_replace("已售" , '' ,$sale);
+
+            $r = [
+                'origin_id' => $id,
+                'name' => $title,
+                "hospital_id" => $this->hospital->id,
+                "platform_type" => HospitalInfo::DAZHONG_ID,
+                "price" => $originPrice,
+                "online_price" => $price,
+                "sell" => $sale,
+                "status" => Product::ONLINE_STATUS,
+            ];
+
+            if ($c_id = Category::validateKeyword($title)) {
+                $r["category_id"] = $c_id;
+            }
+
+            $result[] = $r;
+        }
+
+        return $result;
+    }
+
+    public function listParse($list) {
+        $result =[];
+        foreach ($list as $item) {
+            $href = $item->getAttribute('href');
+            if (!$href) continue;
+            $query_str = parse_url($href, PHP_URL_QUERY);
+            parse_str($query_str, $query_params);
+            if (!isset($query_params['productid'])) continue;
+            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$query_params["productid"]]);
+            $response = $this->searchApi([
+                "productid" => $query_params["productid"],
+                "shopid" => $query_params["shopid"],
+                "shopuuid" => $query_params["shopuuid"]
+            ]);
+            Log::info('2.7   >>>>>>>>大众.拉取:获取商品信息');
+            if (!$response) continue;
+            Log::info('2.8   >>>>>>>>大众.拉取:获取商品信息');
+            $result[] = $response;
+        }
+        return $result;
+    }
+
     public function search()
     {
         $t1 = microtime(true);
@@ -117,35 +207,14 @@ class DaZhongClient extends BaseClient
         $dom = new Dom;
         $dom->loadStr($body);
         $list = $dom->find('#sales .group a.item,#sales .group .item a');
-        $result = [];
 
         $count = $list->count();
         Log::info('2.>>>>大众.拉取:获取商品数量', [
             'name' => $this->hospital->name,
             'count' => $count,
         ]);
+        $result = ($count === 0) ? $this->searchMobile() : $this->listParse($list);
 
-        if ($count === 0) {
-            return $result;
-        }
-
-        foreach ($list as $item) {
-            $href = $item->getAttribute('href');
-            if (!$href) continue;
-            $query_str = parse_url($href, PHP_URL_QUERY);
-            parse_str($query_str, $query_params);
-            if (!isset($query_params['productid'])) continue;
-            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$query_params["productid"]]);
-            $response = $this->searchApi([
-                "productid" => $query_params["productid"],
-                "shopid" => $query_params["shopid"],
-                "shopuuid" => $query_params["shopuuid"]
-            ]);
-            Log::info('2.7   >>>>>>>>大众.拉取:获取商品信息');
-            if (!$response) continue;
-            Log::info('2.8   >>>>>>>>大众.拉取:获取商品信息');
-            $result[] = $response;
-        }
         $t2 = microtime(true);
         Log::info('3.>>>>大众.拉取:结束', [
             'name' => $this->hospital->name,

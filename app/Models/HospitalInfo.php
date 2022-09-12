@@ -123,8 +123,9 @@ class HospitalInfo extends Model
             if ($item['dz_enable'] && $item['dz_origin_id']) {
                 if ($queue)
                     ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client');
-                else
+                else {
                     $item->getProducts(self::DAZHONG_ID, $date);
+                }
             }
         }
 
