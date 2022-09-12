@@ -48,7 +48,7 @@ class ProductController extends AdminController
                     ->body(LineChart::make(['id' => $val]))
                     ->button('<button class="btn btn-white"><i class="feather icon-bar-chart-2"></i></button>');
             });
-            $grid->column('__','日志')->display(function () {
+            $grid->column('__', '日志')->display(function () {
                 $id = $this->id;
 
                 return Modal::make()
@@ -99,7 +99,6 @@ class ProductController extends AdminController
                 $filter->like('name');
                 $hospitals = HospitalInfo::query()
                     ->select(['name', 'id'])
-                    ->where('enable', 1)
                     ->get()
                     ->pluck('name', 'id');
                 $filter->in('hospital_id')->multipleSelect($hospitals);
@@ -162,7 +161,7 @@ class ProductController extends AdminController
             $form->select('status')->options(Product::STATUS);
             $form->select('category_id')->options(Category::selectOptions(null, '无分组'));
             $form->switch('star');
-            $form->embeds('comments','备注s', function ($form) {
+            $form->embeds('comments', '备注s', function ($form) {
 
                 $form->textarea('同类产品');
                 $form->textarea('上游产品');
