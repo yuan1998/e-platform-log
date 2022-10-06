@@ -31,9 +31,8 @@ class MyAjaxLine extends MyLine
         $id = $request->get('id');
 //        $id = [38, 72];
         $product = Product::with(['sellLog' => function ($query) {
-            $today = Carbon::today();
-            $end = $today->toDateTimeString();
-            $start = $today->months(-1)->toDateTimeString();
+            $end = Carbon::today()->toDateTimeString();
+            $start = Carbon::today()->addDays(-30)->toDateTimeString();
             $query->whereBetween('date', [$start, $end]);
         }])
             ->whereIn('id', collect($id))
