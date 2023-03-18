@@ -45,6 +45,7 @@ class DaZhongClient extends BaseClient
                 "Sec-Fetch-User" => '?1',
                 "Sec-Fetch-Dest" => 'document',
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
             ]
         ]);
         Log::info('2.3   >>>>>>>>大众.拉取:获取商品信息');
@@ -98,6 +99,8 @@ class DaZhongClient extends BaseClient
                 "Sec-Fetch-User" => '?1',
                 "Sec-Fetch-Dest" => 'document',
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
+
             ]
         ]);
         $body = $response->getBody()->getContents();
@@ -194,6 +197,7 @@ class DaZhongClient extends BaseClient
                 "Sec-Fetch-User" => '?1',
                 "Sec-Fetch-Dest" => 'document',
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
             ]
         ]);
         $body = $response->getBody()->getContents();
