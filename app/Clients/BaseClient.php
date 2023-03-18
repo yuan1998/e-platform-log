@@ -27,6 +27,8 @@ class BaseClient
             $this->client = new Client([
                 'cookies' => $jar,
                 'timeout' => 60,
+                'read_timeout' => 60,
+                'connect_timeout' => 60,
                 'verify' => false,
                 'headers' => [
                     'user-agent' => 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Mobile Safari/537.36 Edg/94.0.992.31',
