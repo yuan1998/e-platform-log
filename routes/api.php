@@ -13,8 +13,3 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::get('/test', function (Request $request) {
-//    \App\Clients\DaZhongClient::test();
-    \App\Models\HospitalInfo::pullAll();
-});

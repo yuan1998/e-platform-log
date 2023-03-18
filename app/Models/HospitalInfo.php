@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class HospitalInfo extends Model
 {
@@ -110,19 +111,24 @@ class HospitalInfo extends Model
             call_user_func($callback, $query);
         }
 
-        $hospital = $query->get();
         $date = $date ?? Carbon::today()->toDateString();
-        foreach ($hospital as $item) {
+        $hospital = $query->get();
+        foreach ($hospital as $index => $item) {
+            $delay = now()->addMinutes($index * 1);
+            Log::debug("延迟" , [
+                $item['name'],
+                $delay->toDateTimeString(),
+            ]);
             if ($item['enable'] && $item['origin_id']) {
                 if ($queue)
-                    ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client');
+                    ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client')->delay($delay);
                 else
                     $item->getProducts(self::XINYAN_ID, $date);
             }
 
             if ($item['dz_enable'] && $item['dz_origin_id']) {
                 if ($queue)
-                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client');
+                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client')->delay($delay);
                 else {
                     $item->getProducts(self::DAZHONG_ID, $date);
                 }

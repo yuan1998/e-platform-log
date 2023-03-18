@@ -16,7 +16,10 @@ class ClientProductPullJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 60*5;
+    public $timeout = 120;
+    public $id;
+    public $tries = 5;
+    public $backoff = 150;
 
     public $hospitalInfo;
     public $date;
@@ -53,7 +56,7 @@ class ClientProductPullJob implements ShouldQueue
                     'msg' => $exception->getMessage(),
                 ]);
                 if ($statusCode === 403) {
-                    $this->release(60 * 50);
+                    throw new Exception("请求错误");
                 }
             } catch (\Exception $exception) {
                 $statusCode = $exception->getCode();
@@ -62,32 +65,11 @@ class ClientProductPullJob implements ShouldQueue
                     'msg' => $exception->getMessage(),
                 ]);
                 if ($statusCode === 500) {
-                    $this->release(60 * 3);
+                    throw new Exception("错误");
                 }
             }
 
         }
-
-
     }
 
-    /**
-     * The job failed to process.
-     *
-     * @param Exception $exception
-     * @return void
-     */
-    public function failed(Exception $exception)
-    {
-        Log::info('发生错误', [
-            'code' => $exception->getCode(),
-            'msg' => $exception->getMessage(),
-            'hospital' => $this->hospitalInfo,
-            'type' => $this->type,
-        ]);
-        if ($this->attempts() <= 3) {
-            $this->release(60*15);
-        }
-        // Send user notification of failure, etc...
-    }
 }
