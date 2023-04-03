@@ -25,26 +25,26 @@ class DaZhongClient extends BaseClient
             "productid" => "3827144",
             "shopid" => "97497914",
             "shopuuid" => "l7LpxQ7ByObBbXls",
-            "cityid" => "1",
+            "cityid" => "4",
+            "token" => "",
         ], $data);
 
         $response = $this->get('https://mapi.dianping.com/dzbook/prepayproductdetail.json2', [
             'query' => $data,
             'headers' => [
-                "Connection" => 'keep-alive',
-                "Cache-Control" => 'max-age=0',
-                "sec-ch-ua" => '"Chromium";v="94", "Microsoft Edge";v="94", ";Not A Brand";v="99"',
-                "sec-ch-ua-mobile" => '?0',
-                "sec-ch-ua-platform" => '"macOS"',
-                "Upgrade-Insecure-Requests" => '1',
                 "User-Agent" => $this->ua,
-                "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                "Sec-Fetch-Site" => 'none',
-                "Sec-Fetch-Mode" => 'navigate',
-                "Sec-Fetch-User" => '?1',
-                "Sec-Fetch-Dest" => 'document',
-                "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-                "Cookie" => 'edper=SwhkYbM0IrbKx839Pt96PUCasaw035D-8DDN1pKW_yunyIvci4esbN07uGEyZLBCXbyJNnqqzU-wkpvlAkxSpg; mpmerchant_portal_shopid=97902493; _hc.v=4d56775b-7b3e-77f9-9e5a-9a1eaaa33d7b.1678790762; _lxsdk_cuid=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; _lxsdk=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; WEBDFPID=z038zy603u695970y21x2u4uuzz21784813u624z53u97958uz430uw7-1994481818745-1679121817811AOMMCWO75613c134b6a252faa6802015be905511934; cityid=4; default_ab=citylist%3AA%3A1%7CshopList%3AC%3A5%7Cugcdetail%3AA%3A1; pvhistory="6L+U5ZuePjo8L3N1Z2dlc3QvZ2V0SnNvbkRhdGE/ZGV2aWNlX3N5c3RlbT1BTkRST0lEJnlvZGFSZWFkeT1oNT46PDE2NzkxMjIwMzUyOTldX1s="; cy=4; cye=guangzhou; s_ViewType=10; dper=3ff84894edbae22cc586e54a326da06b60ada5a7d99dc16db09bfcc89f2fa40e0d2c5f9b65087ff8e2d447d89bf78926de57cfae1f035689aecc3cecf47703b4; ll=7fd06e815b796be3df069dec7836c3df'
+                'Connection' => 'keep-alive',
+                'sec-ch-ua' => '"Chromium";v="94", "Microsoft Edge";v="94", ";Not A Brand";v="99"',
+                'sec-ch-ua-mobile' => '?0',
+                'sec-ch-ua-platform' => '"macOS"',
+                'Accept' => '*/*',
+                'Origin' => 'https://www.dianping.com',
+                'Sec-Fetch-Site' => 'same-site',
+                'Sec-Fetch-Mode' => 'cors',
+                'Sec-Fetch-Dest' => 'empty',
+                'Referer' => 'https://www.dianping.com/',
+                'Accept-Language' => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                'Cookie' => 'edper=SwhkYbM0IrbKx839Pt96PUCasaw035D-8DDN1pKW_yunyIvci4esbN07uGEyZLBCXbyJNnqqzU-wkpvlAkxSpg; mpmerchant_portal_shopid=97902493; _hc.v=4d56775b-7b3e-77f9-9e5a-9a1eaaa33d7b.1678790762; _lxsdk_cuid=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; _lxsdk=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; WEBDFPID=z038zy603u695970y21x2u4uuzz21784813u624z53u97958uz430uw7-1994481818745-1679121817811AOMMCWO75613c134b6a252faa6802015be905511934; cityid=4; default_ab=citylist%3AA%3A1%7CshopList%3AC%3A5%7Cugcdetail%3AA%3A1; pvhistory="6L+U5ZuePjo8L3N1Z2dlc3QvZ2V0SnNvbkRhdGE/ZGV2aWNlX3N5c3RlbT1BTkRST0lEJnlvZGFSZWFkeT1oNT46PDE2NzkxMjIwMzUyOTldX1s="; cy=4; cye=guangzhou; s_ViewType=10; dper=3ff84894edbae22cc586e54a326da06b60ada5a7d99dc16db09bfcc89f2fa40e0d2c5f9b65087ff8e2d447d89bf78926de57cfae1f035689aecc3cecf47703b4; ll=7fd06e815b796be3df069dec7836c3df; s_ViewType=10'
             ]
         ]);
         $content = $response->getBody()->getContents();
