@@ -19,9 +19,9 @@ class DaZhongClient extends BaseClient
     public function searchApi($data = [])
     {
         $data = array_merge([
-            "platform" => "pc",
+            "platform" => "android",
             "channel" => "dp",
-            "clienttype" => "web",
+            "clienttype" => "m",
             "productid" => "3827144",
             "shopid" => "97497914",
             "shopuuid" => "l7LpxQ7ByObBbXls",
