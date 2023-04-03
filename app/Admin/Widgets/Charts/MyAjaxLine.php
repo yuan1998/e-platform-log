@@ -38,7 +38,6 @@ class MyAjaxLine extends MyLine
             ->whereIn('id', collect($id))
             ->get();
 
-
         $categories = [];
         $data = [];
         foreach ($product as $row) {

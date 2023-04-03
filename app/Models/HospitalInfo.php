@@ -115,10 +115,6 @@ class HospitalInfo extends Model
         $hospital = $query->get();
         foreach ($hospital as $index => $item) {
             $delay = now()->addMinutes($index * 1);
-            Log::debug("延迟" , [
-                $item['name'],
-                $delay->toDateTimeString(),
-            ]);
             if ($item['enable'] && $item['origin_id']) {
                 if ($queue)
                     ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client')->delay($delay);

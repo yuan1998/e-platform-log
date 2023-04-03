@@ -28,7 +28,6 @@ class DaZhongClient extends BaseClient
             "cityid" => "1",
         ], $data);
 
-        Log::info('2.2   >>>>>>>>大众.拉取:获取商品信息');
         $response = $this->get('https://mapi.dianping.com/dzbook/prepayproductdetail.json2', [
             'query' => $data,
             'headers' => [
@@ -45,13 +44,11 @@ class DaZhongClient extends BaseClient
                 "Sec-Fetch-User" => '?1',
                 "Sec-Fetch-Dest" => 'document',
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-                "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
+                "Cookie" => 'edper=SwhkYbM0IrbKx839Pt96PUCasaw035D-8DDN1pKW_yunyIvci4esbN07uGEyZLBCXbyJNnqqzU-wkpvlAkxSpg; mpmerchant_portal_shopid=97902493; _hc.v=4d56775b-7b3e-77f9-9e5a-9a1eaaa33d7b.1678790762; _lxsdk_cuid=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; _lxsdk=186f375a013c8-08d0b94389c4e1-7c342e3c-76aa0-186f375a013c8; WEBDFPID=z038zy603u695970y21x2u4uuzz21784813u624z53u97958uz430uw7-1994481818745-1679121817811AOMMCWO75613c134b6a252faa6802015be905511934; cityid=4; default_ab=citylist%3AA%3A1%7CshopList%3AC%3A5%7Cugcdetail%3AA%3A1; pvhistory="6L+U5ZuePjo8L3N1Z2dlc3QvZ2V0SnNvbkRhdGE/ZGV2aWNlX3N5c3RlbT1BTkRST0lEJnlvZGFSZWFkeT1oNT46PDE2NzkxMjIwMzUyOTldX1s="; cy=4; cye=guangzhou; s_ViewType=10; dper=3ff84894edbae22cc586e54a326da06b60ada5a7d99dc16db09bfcc89f2fa40e0d2c5f9b65087ff8e2d447d89bf78926de57cfae1f035689aecc3cecf47703b4; ll=7fd06e815b796be3df069dec7836c3df'
             ]
         ]);
-        Log::info('2.3   >>>>>>>>大众.拉取:获取商品信息');
         $content = $response->getBody()->getContents();
         $result = json_decode($content, true);
-        Log::info('2.4   >>>>>>>>大众.拉取:获取商品信息');
         $title = data_get($result, 'data.productItems.0.name');
         if (!$title) {
             Log::info('>>>>>>>>>>>>>大众.获取商品详情出错', [
@@ -61,7 +58,6 @@ class DaZhongClient extends BaseClient
             ]);
             return null;
         }
-        Log::info('2.5   >>>>>>>>大众.拉取:获取商品信息');
         $r = [
             'origin_id' => data_get($result, 'data.productItems.0.id'),
             'name' => $title,
@@ -76,7 +72,6 @@ class DaZhongClient extends BaseClient
         if ($id = Category::validateKeyword($title)) {
             $r["category_id"] = $id;
         }
-        Log::info('2.6   >>>>>>>>大众.拉取:获取商品信息');
         return $r;
 
     }
@@ -165,9 +160,8 @@ class DaZhongClient extends BaseClient
                 "shopid" => $query_params["shopid"],
                 "shopuuid" => $query_params["shopuuid"]
             ]);
-            Log::info('2.7   >>>>>>>>大众.拉取:获取商品信息');
             if (!$response) continue;
-            Log::info('2.8   >>>>>>>>大众.拉取:获取商品信息');
+            Log::info('2.2   >>>>>>>>大众.拉取:完成');
             $result[] = $response;
         }
         return $result;
