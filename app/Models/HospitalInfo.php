@@ -79,14 +79,18 @@ class HospitalInfo extends Model
             }
         }
 
+        static::checkHospitalProduct($this->id,$type,$ids);
+
+    }
+
+    public static function checkHospitalProduct($hospitalId , $type , $productIds) {
         Product::query()
-            ->where('hospital_id', $this->id)
+            ->where('hospital_id', $hospitalId)
             ->where('platform_type', $type)
-            ->whereNotIn('id', $ids)
+            ->whereNotIn('id', $productIds)
             ->update([
                 'status' => Product::OFFLINE_STATUS
             ]);
-
     }
 
     public function scopeTypeQuery(Builder $query, $type)
