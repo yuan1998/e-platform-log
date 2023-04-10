@@ -212,7 +212,6 @@ class DaZhongClient extends BaseClient
 
             Log::debug("job {$query_params["productid"]}");
             $job = new DaZhongDetailJob($hospitalId, $this->hospital->name, $query_params["productid"], $query_params["shopid"], $query_params["shopuuid"]);
-//            $job = (new TestJob($query_params["productid"]));
 
             $batch->add([
                 $job
