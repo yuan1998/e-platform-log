@@ -30,7 +30,7 @@ class ProductController extends AdminController
     protected function grid()
     {
         Category::cacheKeyword();
-        return Grid::make(Product::with(['hospital', 'category']), function (Grid $grid) {
+        return Grid::make(Product::with(['hospital', 'category'])->orderBy('status'), function (Grid $grid) {
             $grid->scrollbarX();
             $grid->tools(new PullHospitalTool());
             $grid->disableDeleteButton();
