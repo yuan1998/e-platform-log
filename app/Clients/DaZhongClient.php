@@ -3,20 +3,25 @@
 namespace App\Clients;
 
 
+use App\Jobs\DaZhongDetailJob;
+use App\Jobs\TestJob;
 use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
 use Campo\UserAgent;
+use Carbon\Carbon;
+use Illuminate\Bus\Batch;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use PHPHtmlParser\Dom;
 
 class DaZhongClient extends BaseClient
 {
-
     public $ua;
 
-    public function searchApi($data = [])
+    public static function searchApi($data = [], $hospitalId, $hospitalName)
     {
         $data = array_merge([
             "platform" => "android",
@@ -37,7 +42,8 @@ class DaZhongClient extends BaseClient
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 60,
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_NOSIGNAL => false,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
@@ -85,7 +91,7 @@ class DaZhongClient extends BaseClient
         $title = data_get($result, 'data.productItems.0.name');
         if (!$title) {
             Log::info('>>>>>>>>>>>>>大众.获取商品详情出错', [
-                'name' => $this->hospital->name,
+                'name' => $hospitalName,
                 'content' => $response,
                 'data' => $data
             ]);
@@ -94,7 +100,7 @@ class DaZhongClient extends BaseClient
         $r = [
             'origin_id' => data_get($result, 'data.productItems.0.id'),
             'name' => $title,
-            "hospital_id" => $this->hospital->id,
+            "hospital_id" => $hospitalId,
             "platform_type" => HospitalInfo::DAZHONG_ID,
             "price" => data_get($result, 'data.productItems.0.originalPrice'),
             "online_price" => data_get($result, 'data.productItems.0.price'),
@@ -128,7 +134,6 @@ class DaZhongClient extends BaseClient
                 "Sec-Fetch-Dest" => 'document',
                 "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
                 "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
-
             ]
         ]);
         $body = $response->getBody()->getContents();
@@ -150,13 +155,13 @@ class DaZhongClient extends BaseClient
             if (!$id) continue;
             $title = $item->find('.tuanTitle')->innerText;
             $price = @$item->find('.tuanPrice')->innerText ?? "";
-            $price = str_replace("￥" , '' ,$price);
+            $price = str_replace("￥", '', $price);
 
             $originPrice = @$item->find('.lineThrough')->innerText ?? "";
-            $originPrice = str_replace("￥" , '' ,$originPrice);
+            $originPrice = str_replace("￥", '', $originPrice);
 
             $sale = @$item->find('.tuanSale .sold')->innerText ?? "0";
-            $sale = str_replace("已售" , '' ,$sale);
+            $sale = str_replace("已售", '', $sale);
 
             $r = [
                 'origin_id' => $id,
@@ -179,25 +184,42 @@ class DaZhongClient extends BaseClient
         return $result;
     }
 
-    public function listParse($list) {
-        $result =[];
+    public function listParse($list)
+    {
+        $hospitalId = $this->hospital->id;
+        $type = $this->type;
+        $date = $this->date;
+        $batch = Bus::batch([])
+            ->finally(function (Batch $batch) use ($type, $date, $hospitalId) {
+                $data = Cache::get($batch->id, []);
+                Log::debug("finally", [
+                    $hospitalId,
+                    $date,
+                    $type,
+                    $batch->id,
+                    count($data)
+                ]);
+                HospitalInfo::storeProducts($hospitalId, $data, $date, $type);
+                Cache::forget($batch->id);
+            })
+            ->onQueue('da_zhong_detail');
         foreach ($list as $item) {
             $href = $item->getAttribute('href');
             if (!$href) continue;
             $query_str = parse_url($href, PHP_URL_QUERY);
             parse_str($query_str, $query_params);
             if (!isset($query_params['productid'])) continue;
-            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$query_params["productid"]]);
-            $response = $this->searchApi([
-                "productid" => $query_params["productid"],
-                "shopid" => $query_params["shopid"],
-                "shopuuid" => $query_params["shopuuid"]
+
+            Log::debug("job {$query_params["productid"]}");
+            $job = new DaZhongDetailJob($hospitalId, $this->hospital->name, $query_params["productid"], $query_params["shopid"], $query_params["shopuuid"]);
+//            $job = (new TestJob($query_params["productid"]));
+
+            $batch->add([
+                $job
             ]);
-            if (!$response) continue;
-            Log::info('2.2   >>>>>>>>大众.拉取:完成');
-            $result[] = $response;
         }
-        return $result;
+        $batch->dispatch();
+
     }
 
     public function search()

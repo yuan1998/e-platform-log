@@ -12,12 +12,21 @@ class BaseClient
 
     public $client;
     public $hospital;
+    public $type;
+    public $date;
+
 
     public function __construct(HospitalInfo $hospitalInfo)
     {
         $this->hospital = $hospitalInfo;
     }
 
+    public function fillData($type, $date)
+    {
+        $this->type = $type;
+        $this->date = $date;
+        return $this;
+    }
 
     public function getClient(): Client
     {
@@ -26,9 +35,9 @@ class BaseClient
 
             $this->client = new Client([
                 'cookies' => $jar,
-                'timeout' => 60,
-                'read_timeout' => 60,
-                'connect_timeout' => 60,
+                'timeout' => 30,
+                'read_timeout' => 30,
+                'connect_timeout' => 30,
                 'verify' => false,
                 'headers' => [
                     'user-agent' => 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Mobile Safari/537.36 Edg/94.0.992.31',

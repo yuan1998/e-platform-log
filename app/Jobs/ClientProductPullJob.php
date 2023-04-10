@@ -16,7 +16,7 @@ class ClientProductPullJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 120;
+    public $timeout = 300;
     public $id;
     public $tries = 5;
     public $backoff = 150;
@@ -47,22 +47,25 @@ class ClientProductPullJob implements ShouldQueue
         if ($this->hospitalInfo) {
             try {
                 Log::info('开始拉取', ['name' => $this->hospitalInfo->name, 'type' => $this->type]);
-                $this->hospitalInfo->getProducts($this->type, $this->date);
+                 $this->hospitalInfo->getProducts($this->type, $this->date);
+                sleep(rand(1,10));
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();
                 $statusCode = $response->getStatusCode();
-                Log::info('发生错误', [
+                Log::info('ClientProductPullJob 发生错误', [
                     'code' => $statusCode,
                     'msg' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString()
                 ]);
                 if ($statusCode === 403) {
                     throw new Exception("请求错误");
                 }
             } catch (\Exception $exception) {
                 $statusCode = $exception->getCode();
-                Log::info('发生错误', [
+                Log::info('ClientProductPullJob 发生错误', [
                     'code' => $statusCode,
                     'msg' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString()
                 ]);
                 if ($statusCode === 500) {
                     throw new Exception("错误");

@@ -63,9 +63,19 @@ class HospitalInfo extends Model
      */
     public function getProducts($type = self::XINYAN_ID, $date = null, $logSell = true)
     {
-        $rows = $this->getClient($type)->search();
+        $rows = $this->getClient($type)
+            ->fillData($type, $date)
+            ->search();
+        if (!$rows || !count($rows))
+            return;
+
         $yesterday = $date ?: Carbon::yesterday()->toDateTime();
 
+        self::storeProducts($this->id, $rows, $yesterday, $type, $logSell);
+    }
+
+    public static function storeProducts($hospitalId, $rows, $date, $type, $logSell = true)
+    {
         $ids = [];
         foreach ($rows as $row) {
             $p = Product::updateOrCreate(Arr::only($row, ['origin_id', 'hospital_id']), Arr::except($row, ['origin_id', 'hospital_id']));
@@ -74,16 +84,17 @@ class HospitalInfo extends Model
             if ($logSell) {
                 ProductSell::updateOrCreate([
                     'product_id' => $id,
-                    'date' => $yesterday,
+                    'date' => $date,
                 ], ['sell' => $row['sell']]);
             }
         }
 
-        static::checkHospitalProduct($this->id,$type,$ids);
+        static::checkHospitalProduct($hospitalId, $type, $ids);
 
     }
 
-    public static function checkHospitalProduct($hospitalId , $type , $productIds) {
+    public static function checkHospitalProduct($hospitalId, $type, $productIds)
+    {
         Product::query()
             ->where('hospital_id', $hospitalId)
             ->where('platform_type', $type)
@@ -118,17 +129,16 @@ class HospitalInfo extends Model
         $date = $date ?? Carbon::today()->toDateString();
         $hospital = $query->get();
         foreach ($hospital as $index => $item) {
-            $delay = now()->addMinutes($index * 1);
             if ($item['enable'] && $item['origin_id']) {
                 if ($queue)
-                    ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('client')->delay($delay);
+                    ClientProductPullJob::dispatch($item, $date, self::XINYAN_ID)->onQueue('xin_yan');
                 else
                     $item->getProducts(self::XINYAN_ID, $date);
             }
 
             if ($item['dz_enable'] && $item['dz_origin_id']) {
                 if ($queue)
-                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('client')->delay($delay);
+                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('da_zhong');
                 else {
                     $item->getProducts(self::DAZHONG_ID, $date);
                 }
