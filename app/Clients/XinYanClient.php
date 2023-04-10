@@ -71,7 +71,7 @@ class XinYanClient extends BaseClient
                 "price" => $row['price_origin_online'],
                 "online_price" => $row['price_online'],
                 "sell" => $row['order_cnt'],
-                "created_at" => $row['create_date'],
+                "created_at" => Carbon::parse($row['create_date'])->toDateTimeString(),
                 "status" => Product::ONLINE_STATUS,
             ];
             if ($id = Category::validateKeyword($title)) {
