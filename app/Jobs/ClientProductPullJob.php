@@ -48,11 +48,11 @@ class ClientProductPullJob implements ShouldQueue
             try {
                 Log::info('开始拉取', ['name' => $this->hospitalInfo->name, 'type' => $this->type]);
                  $this->hospitalInfo->getProducts($this->type, $this->date);
-                sleep(rand(1,10));
+                sleep(rand(10,30));
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();
                 $statusCode = $response->getStatusCode();
-                Log::info('ClientProductPullJob 发生错误', [
+                Log::error('ClientProductPullJob 发生错误', [
                     'code' => $statusCode,
                     'msg' => $exception->getMessage(),
                     'trace' => $exception->getTraceAsString()
@@ -62,7 +62,7 @@ class ClientProductPullJob implements ShouldQueue
                 }
             } catch (\Exception $exception) {
                 $statusCode = $exception->getCode();
-                Log::info('ClientProductPullJob 发生错误', [
+                Log::error('ClientProductPullJob 发生错误', [
                     'code' => $statusCode,
                     'msg' => $exception->getMessage(),
                     'trace' => $exception->getTraceAsString()
