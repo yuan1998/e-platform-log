@@ -16,8 +16,8 @@ class ClientProductPullJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 300;
     public $id;
+    public $timeout = 300;
     public $tries = 5;
     public $backoff = 150;
 

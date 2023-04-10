@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Log;
 class DaZhongDetailJob implements ShouldQueue
 {
     use Batchable,Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $timeout = 120;
+    public $timeout = 300;
+    public $tries = 5;
+    public $backoff = 150;
 
     public $hospitalId;
     public $hospitalName;
@@ -64,7 +66,7 @@ class DaZhongDetailJob implements ShouldQueue
                 throw new Exception("错误");
             }
         }
-        sleep(rand(1,5));
+        sleep(rand(1,8));
 
     }
 
