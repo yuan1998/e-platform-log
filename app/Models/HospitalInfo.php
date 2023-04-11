@@ -78,6 +78,9 @@ class HospitalInfo extends Model
     {
         $ids = [];
         foreach ($rows as $row) {
+            if (!is_array($row) || !Arr::has($row, ['origin_id', 'hospital_id']))
+                continue;
+
             $p = Product::updateOrCreate(Arr::only($row, ['origin_id', 'hospital_id']), Arr::except($row, ['origin_id', 'hospital_id']));
             $id = $p->id;
             $ids[] = $id;
