@@ -77,7 +77,7 @@ class DaZhongClient extends BaseClient
         $retryCount = 30;
         $break = false;
         $proxy = null;
-        while ($retryCount > 0 && !$break) {
+        while ($retryCount >= 0 && !$break) {
             try {
                 $proxy = $retryCount ? ProxyClient::getProxy() : null;
                 $content = $this->getProductDetailApiCurl($query, $proxy);
@@ -244,7 +244,7 @@ class DaZhongClient extends BaseClient
     {
         $retryCount = 30;
         $break = false;
-        while ($retryCount > 0 && !$break) {
+        while ($retryCount >= 0 && !$break) {
 
             $proxy = null;
             $config = [
