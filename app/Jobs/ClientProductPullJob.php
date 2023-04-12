@@ -19,7 +19,7 @@ class ClientProductPullJob implements ShouldQueue
     public $id;
     public $timeout = 300;
     public $tries = 5;
-    public $backoff = 150;
+    public $backoff = 10;
 
     public $hospitalInfo;
     public $date;
@@ -70,8 +70,6 @@ class ClientProductPullJob implements ShouldQueue
                     throw new Exception("错误");
                 }
             }
-            sleep(rand(10,30));
-
         }
     }
 

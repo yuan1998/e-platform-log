@@ -17,44 +17,41 @@ use Illuminate\Support\Facades\Log;
 
 class DaZhongDetailJob implements ShouldQueue
 {
-    use Batchable,Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public $timeout = 300;
     public $tries = 5;
-    public $backoff = 150;
+    public $backoff = 10;
 
     public $hospitalId;
-    public $hospitalName;
-    public $productId;
-    public $shopId;
-    public $shopUuid;
+    public $productData;
 
     /**
      * @param $hospitalId
-     * @param $hospitalName
-     * @param $productId
-     * @param $shopId
-     * @param $shopUuid
+     * @param $productData
      */
-    public function __construct($hospitalId, $hospitalName, $productId, $shopId, $shopUuid)
+    public function __construct($hospitalId, $productData)
     {
         $this->hospitalId = $hospitalId;
-        $this->hospitalName = $hospitalName;
-        $this->productId = $productId;
-        $this->shopId = $shopId;
-        $this->shopUuid = $shopUuid;
+        $this->productData = $productData;
     }
 
-    public function handle() {
+    public function handle()
+    {
         try {
-            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$this->productId]);
-            $data = Cache::get($this->batchId,[]);
-            $data[] = DaZhongClient::searchApi([
-                "productid" => $this->productId,
-                "shopid" => $this->shopId,
-                "shopuuid" => $this->shopUuid
-            ],$this->hospitalId,$this->hospitalName);
-            Cache::put($this->batchId , $data);
-        }catch (Exception $exception) {
+            $hospital = HospitalInfo::find($this->hospitalId);
+            $productId = $this->productData['productid'];
+            if (!$hospital || !$productId) return;
+            Log::info('2.1   >>>>>>>>大众.拉取:获取商品信息', [$productId]);
+            $data = Cache::get($this->batchId, []);
+
+            $client = new DaZhongClient($hospital);
+            $result = $client->searchApi($this->productData);
+            if ($result) {
+                $data[] = $result;
+                Cache::put($this->batchId, $data);
+            }
+        } catch (Exception $exception) {
             $statusCode = $exception->getCode();
 
             Log::info('DaZhongDetailJob 发生错误123', [
@@ -63,11 +60,9 @@ class DaZhongDetailJob implements ShouldQueue
                 'trace' => $exception->getTraceAsString()
             ]);
             if ($statusCode === 500) {
-                throw new Exception("错误");
+                throw new Exception("DaZhongDetailJob 错误");
             }
         }
-        sleep(rand(1,8));
-
     }
 
 

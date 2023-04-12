@@ -3,6 +3,7 @@
 namespace App\Clients;
 
 use App\Models\HospitalInfo;
+use Campo\UserAgent;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
@@ -33,6 +34,10 @@ class BaseClient
         if (!$this->client) {
             $jar = new \GuzzleHttp\Cookie\CookieJar();
 
+            $ua = UserAgent::random([
+                'device_type' => 'Desktop',
+            ]);
+
             $this->client = new Client([
                 'cookies' => $jar,
                 'timeout' => 30,
@@ -40,8 +45,7 @@ class BaseClient
                 'connect_timeout' => 30,
                 'verify' => false,
                 'headers' => [
-                    'user-agent' => 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Mobile Safari/537.36 Edg/94.0.992.31',
-                    'x-requested-with' => 'XMLHttpRequest'
+                    'user-agent' => $ua
                 ]
             ]);
         }
@@ -68,5 +72,8 @@ class BaseClient
         return $client->get($url, $config);
     }
 
+    public  static function make(){
+        return new static();
+    }
 
 }
