@@ -46,7 +46,7 @@ class DaZhongClient extends BaseClient
                 'Sec-Fetch-Dest: empty',
                 'Referer: https://www.dianping.com/',
                 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-                'Cookie: _hc.v=875208b5-2930-7808-4d4c-d9f669c627ea.1681205216; _lxsdk=1811901b903c8-04038c9409d822-11473c11-384000-1811901b903c8; _lxsdk_cuid=1811901b903c8-04038c9409d822-11473c11-384000-1811901b903c8; _lxsdk_s=1877462ae98-fd1-5f-17d%7C%7C1; aburl=1; cy=4; cye=guangzhou; dper=fec56066b8820f35d610008edcbe2a4f41bb24466fedd7ef5dd9b4a1015c6d4d4eca85cbad17d1388ff5f27350c119d39f0983f3e6874ad0d9b28562dd57d6a1; fspop=test; ll=7fd06e815b796be3df069dec7836c3df; m_flash2=1; pvhistory="6L+U5ZuePjo8L3N1Z2dlc3QvZ2V0SnNvbkRhdGE/ZGV2aWNlX3N5c3RlbT1BTkRST0lEJnlvZGFSZWFkeT1oNT46PDE2ODEyMDU3NTQ1NTZdX1s="; qruuid=630359ed-9527-4d9b-9a24-0c7d0899da17; WEBDFPID=yux665w8259w5wu6yv6zv081y8x990328123uz6x8xx979581301767v-1996565215624-1681205215624AOMUCQU75613c134b6a252faa6802015be905513004; s_ViewType=10'
+                'Cookie: _lxsdk_cuid=181ebd3888dc0-0449553a7b66fa8-c575422-1fa400-181ebd3888ec8; _lxsdk=181ebd3888dc0-0449553a7b66fa8-c575422-1fa400-181ebd3888ec8; _hc.v=f0839e32-4a44-c313-1e20-e8465c700a07.1657518918; mpmerchant_portal_shopid=97902493; Hm_lvt_602b80cf8079ae6591966cc70a3940e7=1679106314,1680928824; s_ViewType=10; cy=17; cye=xian; WEBDFPID=z8z5x3y191445uyy0w6669yw2y28vzv8813u71175w89795802v6y944-1994466257075-1679106255887CSQCEQG10f02007e9804b0b4cf483cebf1f9f512538; ua=%E9%A5%BF%E4%BA%86%E5%BF%AB%E5%90%83%E9%A5%AD; …N_MI6_-jY8NGhHZCDElgJmL069c6qmvWlvlc7wOQbIRIBVAufmSXFDnZjPw; qruuid=704aea2c-231e-43f1-8bb1-38bc232d99fb; dper=28363b96954b191de7c8ed3e4a17d0d8527d153f86bc188a93c0c742f1ac23c56f25826efcb5af0f7a4efc695c653c242ad9dbf59d844754a6d3a4961d137239; ll=7fd06e815b796be3df069dec7836c3df; Hm_lpvt_602b80cf8079ae6591966cc70a3940e7=1681292483; fspop=test; yDCV98W0pO17F2Us5u0QDxVvXf7Jxkvr%2BYIkblPXJGg%3D="leod2VSGCsg7haVWx38F4Q=="; _lxsdk_s=18774a300aa-2d1-6fd-8e4%7C%7C27; _lx_utm=utm_source%3DBaidu%26utm_medium%3Dorganic'
             ),
         ];
         curl_setopt_array($curl, $options);
@@ -103,7 +103,7 @@ class DaZhongClient extends BaseClient
                 return $result;
             }
         }
-        throw new \Exception("大众.getProductDetailApi 失败");
+        throw new \Exception("大众.getProductDetailApi 失败 {$this->hospital->name}" ,500);
     }
 
     public function searchApi($data)
