@@ -79,8 +79,8 @@ class DaZhongClient extends BaseClient
         $proxy = null;
         while ($retryCount > 0 && !$break) {
             try {
-                $proxy = ProxyClient::getProxy();
-                $content = $this->getProductDetailApiCurl($query , $proxy);
+                $proxy = $retryCount ? ProxyClient::getProxy() : null;
+                $content = $this->getProductDetailApiCurl($query, $proxy);
                 $result = json_decode($content, true);
             } catch (\Exception $exception) {
                 $result = null;
@@ -265,8 +265,9 @@ class DaZhongClient extends BaseClient
                 ]
             ];
             try {
-                if ($proxy = ProxyClient::getProxy())
-                    $config['proxy'] = "http://$proxy";
+                if ($retryCount)
+                    if ($proxy = ProxyClient::getProxy())
+                        $config['proxy'] = "http://$proxy";
                 $response = $this->get($this->hospital->dz_url, $config);
                 $body = $response->getBody()->getContents();
             } catch (\Exception $exception) {

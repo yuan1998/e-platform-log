@@ -19,7 +19,7 @@ class XinYanClient extends BaseClient
     {
         $retryCount = 30;
         $break = false;
-        while ($retryCount > 0 && !$break) {
+        while ($retryCount >= 0 && !$break) {
             $data = [
                 "hospital_id" => $id,
                 "is_home" => "0",
@@ -46,8 +46,9 @@ class XinYanClient extends BaseClient
             ];
             $proxy = null;
             try {
-                if ($proxy = ProxyClient::getProxy())
-                    $config['proxy'] = "http://$proxy";
+                if ($retryCount)
+                    if ($proxy = ProxyClient::getProxy())
+                        $config['proxy'] = "http://$proxy";
                 $response = $this->get('https://m.soyoung.com/hospital/product', $config);
                 $body = $response->getBody()->getContents();
                 $result = json_decode($body, true);
