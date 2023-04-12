@@ -95,7 +95,7 @@ class DaZhongClient extends BaseClient
                 Log::info('>>>大众.getProductDetailApi', [
                     'retry' => $retryCount,
                     'proxy' => $proxy,
-                    'content' => $content,
+                    'content' => $content ?? $result,
                 ]);
                 $retryCount--;
             } else {
