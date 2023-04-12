@@ -74,7 +74,7 @@ class DaZhongClient extends BaseClient
         ], $data);
         $query = http_build_query($data);
 
-        $retryCount = 10;
+        $retryCount = 30;
         $break = false;
         $proxy = null;
         while ($retryCount > 0 && !$break) {
@@ -242,7 +242,7 @@ class DaZhongClient extends BaseClient
 
     public function getHospitalHomeApi()
     {
-        $retryCount = 10;
+        $retryCount = 30;
         $break = false;
         while ($retryCount > 0 && !$break) {
 
