@@ -17,7 +17,7 @@ class XinYanClient extends BaseClient
 
     public function getHospitalHomeApi($id, $page)
     {
-        $retryCount = 5;
+        $retryCount = 30;
         $break = false;
         while ($retryCount > 0 && !$break) {
             $data = [
