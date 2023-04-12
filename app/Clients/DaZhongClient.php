@@ -79,7 +79,7 @@ class DaZhongClient extends BaseClient
         $proxy = null;
         while ($retryCount >= 0 && !$break) {
             try {
-                $proxy = $retryCount ? ProxyClient::getProxy() : null;
+                $proxy = !!$retryCount ? ProxyClient::getProxy() : null;
                 $content = $this->getProductDetailApiCurl($query, $proxy);
                 $result = json_decode($content, true);
             } catch (\Exception $exception) {
