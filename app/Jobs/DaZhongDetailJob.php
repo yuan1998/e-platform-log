@@ -63,7 +63,7 @@ class DaZhongDetailJob implements ShouldQueue
                 throw new Exception("DaZhongDetailJob 错误");
             }
         }
-        sleep(rand(1,10));
+        sleep(rand(5,10));
     }
 
 
