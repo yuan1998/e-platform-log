@@ -70,7 +70,7 @@ class ClientProductPullJob implements ShouldQueue
                     throw new Exception("错误");
                 }
             }
-            sleep(rand(20,50))
+            sleep(rand(20,50));
         }
     }
 
