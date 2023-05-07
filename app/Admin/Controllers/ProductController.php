@@ -53,7 +53,8 @@ class ProductController extends AdminController
 
                 return Modal::make()
                     ->xl()
-                    ->delay(300) // loading 效果延迟时间设置长一些，否则图表可能显示不出来
+                    ->delay(300)
+// loading 效果延迟时间设置长一些，否则图表可能显示不出来
 //                    ->($dropdown)
                     ->title($this->name)
                     ->body(ProductLogRenderable::make(['id' => $id]))

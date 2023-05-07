@@ -11,6 +11,18 @@ use Dcat\Admin\Layout\Row;
 
 class HomeController extends Controller
 {
+
+    public function test(Content $content) {
+        return $content
+            ->header('Dashboard')
+            ->description('Description...')
+            ->body(\Inertia\Inertia::render('CompanySellTable', [
+            ])
+                ->rootView('admin.ib-app')
+                ->toResponse(request())
+                ->content());
+    }
+
     public function index(Content $content)
     {
         return $content

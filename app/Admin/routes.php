@@ -13,6 +13,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index');
+    $router->get('/test', 'HomeController@test');
 
     $router->resource('/hospital_info', 'HospitalInfoController');
     $router->resource('/products', 'ProductController');

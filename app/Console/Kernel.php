@@ -26,11 +26,11 @@ class Kernel extends ConsoleKernel
             $date = Carbon::yesterday()->toDateString();
             HospitalInfo::pullAll(null, true, $date);
         })->dailyAt("00:05");
-        $schedule->call(function () {
-            Log::info('定期运行 : 11:50');
-            $date = Carbon::today()->toDateString();
-            HospitalInfo::pullAll(null, true, $date);
-        })->dailyAt("11:50");
+//        $schedule->call(function () {
+//            Log::info('定期运行 : 11:50');
+//            $date = Carbon::today()->toDateString();
+//            HospitalInfo::pullAll(null, true, $date);
+//        })->dailyAt("11:50");
     }
 
     /**

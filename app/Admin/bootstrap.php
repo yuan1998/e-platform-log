@@ -1,10 +1,8 @@
 <?php
 
+use App\Admin\Grid\Displayers\NewCopyable;
 use Dcat\Admin\Admin;
-use Dcat\Admin\Grid;
-use Dcat\Admin\Form;
-use Dcat\Admin\Grid\Filter;
-use Dcat\Admin\Show;
+use Dcat\Admin\Grid\Column;
 
 /**
  * Dcat-admin - admin builder based on Laravel.
@@ -24,3 +22,8 @@ use Dcat\Admin\Show;
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+Admin::disablePjax();
+
+Column::extend('newCopyable', NewCopyable::class);
+
+app('view')->prependNamespace('admin', resource_path('views/admin'));
