@@ -110,7 +110,6 @@ class DaZhongClient extends BaseClient
             } catch (\Exception $exception) {
                 $result = null;
                 $content = $exception->getMessage();
-                self::switchCookie();
             }
             if (!data_get($result, 'data.productItems.0.name')) {
                 if ($proxy)
@@ -121,6 +120,7 @@ class DaZhongClient extends BaseClient
                     'proxy' => $proxy,
                     'content' => $result ?? $content,
                 ]);
+                self::switchCookie();
                 $retryCount--;
             } else {
                 Log::info('>>>大众.getProductDetailApi.OK');
