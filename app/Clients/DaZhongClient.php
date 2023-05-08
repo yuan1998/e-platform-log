@@ -36,7 +36,7 @@ class DaZhongClient extends BaseClient
         $index = Cache::get("cookie_key", 0);
         if (!isset(self::$cookies[++$index]))
             $index = 0;
-        Log::info("大众:更换Cookie");
+        Log::info("大众:更换Cookie $index");
         Cache::put('cookie_key', $index);
     }
 
