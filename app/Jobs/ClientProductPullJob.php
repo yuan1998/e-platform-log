@@ -67,7 +67,7 @@ class ClientProductPullJob implements ShouldQueue
                     'trace' => $exception->getTraceAsString()
                 ]);
                 if ($statusCode === 500) {
-                    throw new Exception("错误");
+                    throw $exception;
                 }
             }
             sleep(rand(20,50));

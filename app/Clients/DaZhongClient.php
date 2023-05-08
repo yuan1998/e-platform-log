@@ -42,7 +42,6 @@ class DaZhongClient extends BaseClient
         $curl = curl_init();
         $cookie = self::getCookie();
 
-
         $options = [
             CURLOPT_URL => 'https://mapi.dianping.com/dzbook/prepayproductdetail.json2?' . $query,
             CURLOPT_RETURNTRANSFER => true,
@@ -94,13 +93,12 @@ class DaZhongClient extends BaseClient
         $query = http_build_query($data);
 
         $retryCount = 30;
-        $break = false;
         $proxy = null;
-        while ($retryCount >= -1 && !$break) {
+        while ($retryCount >= -1) {
             try {
-                if ($retryCount> 0) {
-                    $proxy =  ProxyClient::getProxy();
-                }else if ($retryCount === -1) {
+                if ($retryCount > 0 && $retryCount != 30) {
+                    $proxy = ProxyClient::getProxy();
+                } else if ($retryCount === -1) {
                     self::switchCookie();
                 }
 
@@ -113,8 +111,6 @@ class DaZhongClient extends BaseClient
             if (!data_get($result, 'data.productItems.0.name')) {
                 if ($proxy)
                     ProxyClient::deleteProxy($proxy);
-                else
-                    $break = true;
 
                 Log::info('>>>大众.getProductDetailApi', [
                     'retry' => $retryCount,
@@ -267,48 +263,49 @@ class DaZhongClient extends BaseClient
     public function getHospitalHomeApi()
     {
         $retryCount = 30;
-        $break = false;
-        while ($retryCount >= 0 && !$break) {
-
-            $proxy = null;
-            $config = [
-                'headers' => [
-                    "Connection" => 'keep-alive',
-                    "Cache-Control" => 'max-age=0',
-                    "sec-ch-ua" => '"Chromium";v="94", "Microsoft Edge";v="94", ";Not A Brand";v="99"',
-                    "sec-ch-ua-mobile" => '?0',
-                    "sec-ch-ua-platform" => '"macOS"',
-                    "Upgrade-Insecure-Requests" => '1',
-                    "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                    "Sec-Fetch-Site" => 'none',
-                    "Sec-Fetch-Mode" => 'navigate',
-                    "Sec-Fetch-User" => '?1',
-                    "Sec-Fetch-Dest" => 'document',
-                    "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-                    "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
-                ]
-            ];
+        $proxy = null;
+        $config = [
+            'headers' => [
+                "Connection" => 'keep-alive',
+                "Cache-Control" => 'max-age=0',
+                "sec-ch-ua" => '"Chromium";v="94", "Microsoft Edge";v="94", ";Not A Brand";v="99"',
+                "sec-ch-ua-mobile" => '?0',
+                "sec-ch-ua-platform" => '"macOS"',
+                "Upgrade-Insecure-Requests" => '1',
+                "Accept" => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                "Sec-Fetch-Site" => 'none',
+                "Sec-Fetch-Mode" => 'navigate',
+                "Sec-Fetch-User" => '?1',
+                "Sec-Fetch-Dest" => 'document',
+                "Accept-Language" => 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                "Cookie" => 'dper=e195f4431767b32d312692082052cc03e1caa7c47a85556521aa31b08761989c4e3fc05cbb005cdd66a7883d8ffb7113dd456fd2a4c0486c3c3ebccf5562368f'
+            ]
+        ];
+        $body = null;
+        $err = null;
+        while ($retryCount >= 0 ) {
             try {
-                if ($retryCount)
+                if ($retryCount && $retryCount != 30)
                     if ($proxy = ProxyClient::getProxy())
                         $config['proxy'] = "http://$proxy";
                 $response = $this->get($this->hospital->dz_url, $config);
                 $body = $response->getBody()->getContents();
             } catch (\Exception $exception) {
-                $body = null;
+                $err = $exception->getMessage();
             }
 
-            if (!$body || preg_match("/验证中心/", $body)) {
+            if ($err || preg_match("/验证中心/", $body)) {
+                self::switchCookie();
                 Log::info('大众 Api', [
                     '$retryCount' => $retryCount,
                     'hospital' => $this->hospital->name,
-                    'result' => $body,
+                    'result' => $err ?: $body,
                 ]);
 
-                if ($proxy)
+                if ($proxy) {
                     ProxyClient::deleteProxy($proxy);
-                else
-                    $break = true;
+                    $proxy = null;
+                }
                 $retryCount--;
             } else {
                 return $body;
