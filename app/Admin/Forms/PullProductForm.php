@@ -5,6 +5,7 @@ namespace App\Admin\Forms;
 use App\Models\Category;
 use App\Models\HospitalInfo;
 use App\Models\Product;
+use Carbon\Carbon;
 use Dcat\Admin\Widgets\Form;
 use Dcat\Admin\Traits\LazyWidget;
 use Dcat\Admin\Contracts\LazyRenderable;
@@ -17,7 +18,7 @@ class PullProductForm extends Form implements LazyRenderable
     public function handle(array $input)
     {
         $queue = $input['queue'] === '1';
-
+        $date = $input['yesterday'] ? Carbon::yesterday()->toDateString() : today()->toDateString();
         HospitalInfo::pullAll(function (\Illuminate\Database\Eloquent\Builder $query) use ($input) {
             if ($type = $input['platform_type']) {
                 $query->typeQuery($type);
@@ -26,7 +27,7 @@ class PullProductForm extends Form implements LazyRenderable
             if ($id = $input['id']) {
                 $query->whereIn('id', $id);
             }
-        }, $queue);
+        }, $queue,$date);
 
 
         return $this->response()->success($queue ? '开始队列获取,请耐心等待运行结束~' : '获取数据完成~')->refresh();
@@ -35,6 +36,7 @@ class PullProductForm extends Form implements LazyRenderable
     public function form()
     {
         // 获取外部传递参数
+        $this->switch('yesterday' , '昨天')->default(false);
 
         $this->multipleSelect('platform_type', '平台列表')
             ->options(HospitalInfo::PLATFORM_LIST)
