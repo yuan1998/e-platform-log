@@ -46,7 +46,7 @@ class XinYanClient extends BaseClient
             ];
             $proxy = null;
             try {
-                if ($retryCount)
+                if ($retryCount && $retryCount < 30)
                     if ($proxy = ProxyClient::getProxy())
                         $config['proxy'] = "http://$proxy";
                 $response = $this->get('https://m.soyoung.com/hospital/product', $config);
