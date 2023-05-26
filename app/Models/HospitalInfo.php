@@ -139,13 +139,14 @@ class HospitalInfo extends Model
                     $item->getProducts(self::XINYAN_ID, $date);
             }
 
-            if ($item['dz_enable'] && $item['dz_origin_id']) {
-                if ($queue)
-                    ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('da_zhong');
-                else {
-                    $item->getProducts(self::DAZHONG_ID, $date);
+            if (admin_setting('DA_ZHONG_ENABLE'))
+                if ($item['dz_enable'] && $item['dz_origin_id']) {
+                    if ($queue)
+                        ClientProductPullJob::dispatch($item, $date, self::DAZHONG_ID)->onQueue('da_zhong');
+                    else {
+                        $item->getProducts(self::DAZHONG_ID, $date);
+                    }
                 }
-            }
         }
 
     }
